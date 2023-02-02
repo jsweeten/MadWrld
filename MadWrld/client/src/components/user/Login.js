@@ -12,8 +12,10 @@ export default function Login() {
   const loginSubmit = (e) => {
     e.preventDefault();
     login(email, password)
-      .then(() => navigate("/"))
-      .catch(() => alert("Invalid email or password"));
+      .then(() => {
+      console.log("Logged in sucessfully");  
+      navigate("/")})
+      .catch(() => console.log("Invalid email or password"));
   };
 
   return (

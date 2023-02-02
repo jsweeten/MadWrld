@@ -9,7 +9,7 @@ import UserDetails from "./user/UserDetails";
 import ListUsers from "./user/ListUsers";
 import ListTemplates from "./template/ListTemplates";
 
-export default function ApplicationViews({ isLoggedIn, role }) {
+export default function ApplicationViews({ isLoggedIn }) {
   return (
     <main>
       <Routes>
@@ -18,8 +18,6 @@ export default function ApplicationViews({ isLoggedIn, role }) {
             index
             element={isLoggedIn ? <MadLibList /> : <Navigate to="/login" />}
           />
-          <Route path="login" element={<Login />} />
-          <Route path="register" element={<Register />} />
           <Route path="madlibdetails/:id" element={<MadLibDetails />} />
 
           <Route path="mymadlibs" element={isLoggedIn ? <UserMadLibs /> : <Navigate to="/login" />} />
@@ -33,11 +31,13 @@ export default function ApplicationViews({ isLoggedIn, role }) {
 
           <Route path="users">
             <Route index
-              element={isLoggedIn && role === "Admin" ? <ListUsers />
-                : <Navigate to="/login" />} />
+              element={isLoggedIn ? <ListUsers />
+              : <Navigate to="/login" />} />
             <Route path=":id" element={<UserDetails />} />
           </Route>
 
+          <Route path="login" element={<Login />} />
+          <Route path="register" element={<Register />} />
           <Route path="*" element={<p>Whoops, nothing here...</p>} />
         </Route>
       </Routes>

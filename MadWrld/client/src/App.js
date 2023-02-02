@@ -3,37 +3,27 @@ import { BrowserRouter as Router } from "react-router-dom";
 import { Spinner } from 'reactstrap';
 import Header from "./components/nav/Header";
 import ApplicationViews from "./components/ApplicationViews";
-import { onLoginStatusChange, getUserDetails } from "./modules/authManager";
-import firebase from 'firebase';
+import { onLoginStatusChange } from "./modules/authManager";
+
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(null),
-    [role, setRole] = useState("")
+  const [isLoggedIn, setIsLoggedIn] = useState(null)
 
   useEffect(() => {
     onLoginStatusChange(setIsLoggedIn);
   }, []);
 
-  useEffect(() => {
-    if (isLoggedIn) {
-      // firebase.auth().currentUser.uid grabs the firebaseUUID -- firebase has many helpers like this
-      getUserDetails(firebase.auth().currentUser.uid)
-        .then(userObject => {
-          setRole(userObject.userType.name)
-        })
-    } else {
-      setRole("")
-    }
-  }, [isLoggedIn])
-
+  // The "isLoggedIn" state variable will be null until //  the app's connection to firebase has been established.
+  //  Then it will be set to true or false by the "onLoginStatusChange" function
   if (isLoggedIn === null) {
+    // Until we know whether or not the user is logged in or not, just show a spinner
     return <Spinner className="app-spinner dark" />;
   }
 
   return (
     <Router>
-      <Header isLoggedIn={isLoggedIn} role={role} />
-      <ApplicationViews isLoggedIn={isLoggedIn} role={role} />
+      <Header isLoggedIn={isLoggedIn} />
+      <ApplicationViews isLoggedIn={isLoggedIn} />
     </Router>
   );
 }
