@@ -1,7 +1,7 @@
 import firebase from "firebase/app";
 import "firebase/auth";
 
-const _apiUrl = "/api/UserProfile";
+const _apiUrl = "/api/userprofile";
 
 const _doesUserExist = (firebaseUserId) => {
   return getToken().then((token) =>
@@ -39,10 +39,10 @@ export const login = (email, pw) => {
     .then((doesUserExist) => {
       if (!doesUserExist) {
 
-        // If we couldn't find the user in our app's database, or the user is deactivated, we should logout of firebase
+        // If we couldn't find the user in our app's database, we should logout of firebase
         logout();
 
-        throw new Error("Something's wrong. The user exists in firebase, but not in the application database. (User may be deactivated)");
+        throw new Error("Something's wrong. The user exists in firebase, but not in the application database.");
       } else {
         _onLoginStatusChangedHandler(true);
       }

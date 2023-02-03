@@ -8,6 +8,7 @@ import UserMadLibs from "./madlib/UserMadLibs";
 import UserDetails from "./user/UserDetails";
 import ListUsers from "./user/ListUsers";
 import ListTemplates from "./template/ListTemplates";
+import TemplateForm from "./template/TemplateForm";
 
 export default function ApplicationViews({ isLoggedIn }) {
   return (
@@ -16,23 +17,29 @@ export default function ApplicationViews({ isLoggedIn }) {
         <Route path="/">
           <Route
             index
-            element={isLoggedIn ? <MadLibList /> : <Navigate to="/login" />}
-          />
-          <Route path="madlibdetails/:id" element={<MadLibDetails />} />
+            element={ //isLoggedIn ?
+              <MadLibList />
+              // : <Navigate to="/login" />
+            }/>
+          <Route path="madlibdetails/:id" element={isLoggedIn ? <MadLibDetails /> : <Navigate to="/login" />} />
 
-          <Route path="mymadlibs" element={isLoggedIn ? <UserMadLibs /> : <Navigate to="/login" />} />
+          <Route path="mymadlibs" element={ // isLoggedIn ?
+            <UserMadLibs />
+            // : <Navigate to="/login" />
+          } />
 
           <Route path="templates">
             <Route index
               element={
-                isLoggedIn ? <ListTemplates /> : <Navigate to="/login" />
-              } />
+                // isLoggedIn ? <ListTemplates /> : <Navigate to="/login" />
+                < ListTemplates />}/>
           </Route>
+          <Route path="templates/:id" element={// isLoggedIn ?
+          < TemplateForm /> } />
 
           <Route path="users">
             <Route index
-              element={isLoggedIn ? <ListUsers />
-              : <Navigate to="/login" />} />
+              element={<ListUsers />} />
             <Route path=":id" element={<UserDetails />} />
           </Route>
 

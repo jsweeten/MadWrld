@@ -1,1 +1,1 @@
-SELECT * FROM MadLib;
+SELECT * FROM MLTemplate;
