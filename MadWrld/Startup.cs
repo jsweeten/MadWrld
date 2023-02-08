@@ -25,6 +25,7 @@ namespace MadWrld
         {
             services.AddTransient<IUserProfileRepository, UserProfileRepository>();
             services.AddTransient<IMLTemplateRepository, MLTemplateRepository>();
+            services.AddTransient<IMadLibRepository, MadLibRepository>();
 
             var firebaseProjectId = Configuration.GetValue<string>("FirebaseProjectId");
             var googleTokenUrl = $"https://securetoken.google.com/{firebaseProjectId}";

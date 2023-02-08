@@ -7,6 +7,7 @@ GO
 USE [MadWrld]
 GO
 
+DROP TABLE IF EXISTS [UserType];
 DROP TABLE IF EXISTS [UserProfile];
 DROP TABLE IF EXISTS [MLTemplate];
 DROP TABLE IF EXISTS [MadLib];
@@ -16,12 +17,19 @@ DROP TABLE IF EXISTS [MLAnswerTemplate];
 GO
 
 
+CREATE TABLE [UserType] (
+  [Id] INTEGER IDENTITY PRIMARY KEY NOT NULL,
+  [Name] NVARCHAR(50) NOT NULL
+)
+GO
+
 CREATE TABLE [UserProfile] (
   [Id] int PRIMARY KEY IDENTITY(1, 1),
   [FirebaseUserId] nvarchar(255) NOT NULL,
   [FirstName] nvarchar(255) NOT NULL,
   [LastName] nvarchar(255) NOT NULL,
-  [Email] nvarchar(255) NOT NULL
+  [Email] nvarchar(255) NOT NULL,
+  [UserTypeId] INTEGER NOT NULL
 )
 GO
 
@@ -46,6 +54,7 @@ CREATE TABLE [Category] (
 )
 GO
 
+
 CREATE TABLE [CategoryTemplate] (
   [Id] int PRIMARY KEY IDENTITY(1, 1),
   [CategoryId] int NOT NULL,
@@ -60,6 +69,9 @@ CREATE TABLE [MLAnswerTemplate] (
   [PartOfSpeech] nvarchar(255) NOT NULL,
   [Position] int NOT NULL
 )
+GO
+
+ALTER TABLE [UserProfile] ADD FOREIGN KEY ([UserTypeId]) REFERENCES [UserType] ([Id]) ON DELETE CASCADE
 GO
 
 ALTER TABLE [MadLib] ADD FOREIGN KEY ([UserId]) REFERENCES [UserProfile] ([Id])
@@ -79,3 +91,6 @@ GO
 
 ALTER TABLE [MLAnswerTemplate] ADD FOREIGN KEY ([TemplateId]) REFERENCES [MLTemplate] ([Id]) ON DELETE CASCADE
 GO
+
+ALTER TABLE UserProfile
+ADD UserTypeId bit NOT NULL DEFAULT(1);

@@ -1,12 +1,16 @@
 USE [MadWrld];
 GO
 
+set identity_insert [UserType] on
+insert into [UserType] ([ID], [Name]) VALUES (1, 'Admin'), (2, 'Author');
+set identity_insert [UserType] off
+
 set identity_insert [UserProfile] on
-insert into UserProfile (Id, FireBaseUserId, FirstName, LastName, Email) values (1, '9zigiEfx3SVOGGQAtcMTofV0UZE3', 'Foo', 'Bar', 'foo@bar.com');
-insert into UserProfile (Id, FireBaseUserId, FirstName, LastName, Email) values (2, 'nuldgqyqy9gmuC5DrLrtirRjk9l2', 'David', 'Grohl', 'foo@fighters.com');
-insert into UserProfile (Id, FireBaseUserId, FirstName, LastName, Email) values (3, 'hvW8G4mABFUlA7YjIVqG3JnVJe92', 'Admina', 'Strator', 'admin@example.com');
-insert into UserProfile (Id, FireBaseUserId, FirstName, LastName, Email) values (4, 'rb3pvnLBVgXD1d9UPEeeR6zG6lC3', 'Maddie', 'Libbington', 'madlibluvr@madwrld.com');
-insert into UserProfile (Id, FireBaseUserId, FirstName, LastName, Email) values (5, '9c1SAQiMbIfRZTt7KcZRXC1VtXq2', 'Mad', 'Lib', 'm@dlib.com');
+insert into UserProfile (Id, FireBaseUserId, FirstName, LastName, Email, UserTypeId) values (1, '9zigiEfx3SVOGGQAtcMTofV0UZE3', 'Foo', 'Bar', 'foo@bar.com', 1);
+insert into UserProfile (Id, FireBaseUserId, FirstName, LastName, Email, UserTypeId) values (2, 'nuldgqyqy9gmuC5DrLrtirRjk9l2', 'David', 'Grohl', 'foo@fighters.com', 2);
+insert into UserProfile (Id, FireBaseUserId, FirstName, LastName, Email, UserTypeId) values (3, 'hvW8G4mABFUlA7YjIVqG3JnVJe92', 'Admina', 'Strator', 'admin@example.com', 2);
+insert into UserProfile (Id, FireBaseUserId, FirstName, LastName, Email, UserTypeId) values (4, 'rb3pvnLBVgXD1d9UPEeeR6zG6lC3', 'Maddie', 'Libbington', 'madlibluvr@madwrld.com', 2);
+insert into UserProfile (Id, FireBaseUserId, FirstName, LastName, Email, UserTypeId) values (5, '9c1SAQiMbIfRZTt7KcZRXC1VtXq2', 'Mad', 'Lib', 'm@dlib.com', 2);
 set identity_insert [UserProfile] off
 
 set identity_insert [MLTemplate] on
@@ -39,28 +43,28 @@ set identity_insert [MLAnswerTemplate] on
 insert into MLAnswerTemplate (Id, TemplateId, Position, PartofSpeech, Content)
 values 
 /* A Day At The Beach */
-(1, 1, 1, 'Plural Noun', 'Summer is finally here and I can’t wait to hit the beach! I grabbed my @pluralnoun and my'),
-(2, 1, 2, 'Noun', '@noun and hopped in the Jeep for a what I hoped was a beautiful day.'),
-(3, 1, 3, 'Place', 'As I was pulling in to the @place parking lot, I got a call from Chad telling me he was no longer able to make it. Shucks! Despite the disappointing news, I was still determined have a good time. I grabbed my beach bag and headed for the water.'),
-(4, 1, 4, 'Adjective', 'The beach was much more @adjective than I remember,'),
-(5, 1, 5, 'Number', 'though it has been @number years since I last visited.'),
-(6, 1, 6, 'Hobby', 'I laid out my beach blanket, set up my chair and my umbrella, and cracked open to page one of my new book: “An Advanced Guide To @hobby”.'),
-(7, 1, 7, 'Article of Clothing', 'After an hour of reading, I decided it was time to take a dip. I put on my flippers and lucky @articleofclothing and waded in'),
-(8, 1, 8, 'Adjective', 'to the @adjective, blue ocean water. The water was freezing!'),
-(9, 1, 9, 'Sport', '“Oh well,” I thought to myself. “Maybe I’ll find someone on the beach who wants to play @sport with me.”'),
-(10, 1, 10, 'Beverage', 'I walked up and down the beach, but couldn’t find anyone who was interested. Defeated, I packed up my beach bag and headed to the boardwalk. I found a bar with great pizza and half off glasses of @beverage. It wasn’t the day I imagined, but I still had a pretty good time.'),
+(1, 1, 1, 'Plural Noun', 'Summer is finally here and I can’t wait to hit the beach! I grabbed my @input and my'),
+(2, 1, 2, 'Noun', '@input and hopped in the Jeep for a what I hoped was a beautiful day.'),
+(3, 1, 3, 'Place', 'As I was pulling in to the @input parking lot, I got a call from Chad telling me he was no longer able to make it. Shucks! Despite the disappointing news, I was still determined have a good time. I grabbed my beach bag and headed for the water.'),
+(4, 1, 4, 'Adjective', 'The beach was much more @input than I remember,'),
+(5, 1, 5, 'Number', 'though it has been @input years since I last visited.'),
+(6, 1, 6, 'Hobby', 'I laid out my beach blanket, set up my chair and my umbrella, and cracked open to page one of my new book: “An Advanced Guide To @input”.'),
+(7, 1, 7, 'Article of Clothing', 'After an hour of reading, I decided it was time to take a dip. I put on my flippers and lucky @input and waded in'),
+(8, 1, 8, 'Adjective', 'to the @input, blue ocean water. The water was freezing!'),
+(9, 1, 9, 'Sport', '“Oh well,” I thought to myself. “Maybe I’ll find someone on the beach who wants to play @input with me.”'),
+(10, 1, 10, 'Beverage', 'I walked up and down the beach, but couldn’t find anyone who was interested. Defeated, I packed up my beach bag and headed to the boardwalk. I found a bar with great pizza and half off glasses of @input. It wasn’t the day I imagined, but I still had a pretty good time.'),
 
 /* Grammy Night */
-(11, 2, 1, 'Plural Noun', 'Summer is finally here and I can’t wait to hit the beach! I grabbed my @pluralnoun and my'),
-(12, 2, 2, 'Noun', '@noun and hopped in the Jeep for a what I hoped was a beautiful day.'),
-(13, 2, 3, 'Place', 'As I was pulling in to the @place parking lot, I got a call from Chad telling me he was no longer able to make it. Shucks! Despite the disappointing news, I was still determined have a good time. I grabbed my beach bag and headed for the water.'),
-(14, 2, 4, 'Adjective', 'The beach was much more @adjective than I remember,'),
-(15, 2, 5, 'Number', 'though it has been @number years since I last visited.'),
-(16, 2, 6, 'Hobby', 'I laid out my beach blanket, set up my chair and my umbrella, and cracked open to page one of my new book: “An Advanced Guide To @hobby”.'),
-(17, 2, 7, 'Article of Clothing', 'After an hour of reading, I decided it was time to take a dip. I put on my flippers and lucky @articleofclothing and waded in'),
-(18, 2, 8, 'Adjective', 'to the @adjective, blue ocean water. The water was freezing!'),
-(19, 2, 9, 'Sport', '“Oh well,” I thought to myself. “Maybe I’ll find someone on the beach who wants to play @sport with me.”'),
-(20, 2, 10, 'Beverage', 'I walked up and down the beach, but couldn’t find anyone who was interested. Defeated, I packed up my beach bag and headed to the boardwalk. I found a bar with great pizza and half off glasses of @beverage. It wasn’t the day I imagined, but I still had a pretty good time.'),
+(11, 2, 1, 'Plural Noun', 'Summer is finally here and I can’t wait to hit the beach! I grabbed my @input and my'),
+(12, 2, 2, 'Noun', '@input and hopped in the Jeep for a what I hoped was a beautiful day.'),
+(13, 2, 3, 'Place', 'As I was pulling in to the @input parking lot, I got a call from Chad telling me he was no longer able to make it. Shucks! Despite the disappointing news, I was still determined have a good time. I grabbed my beach bag and headed for the water.'),
+(14, 2, 4, 'Adjective', 'The beach was much more @input than I remember,'),
+(15, 2, 5, 'Number', 'though it has been @input years since I last visited.'),
+(16, 2, 6, 'Hobby', 'I laid out my beach blanket, set up my chair and my umbrella, and cracked open to page one of my new book: “An Advanced Guide To @input”.'),
+(17, 2, 7, 'Article of Clothing', 'After an hour of reading, I decided it was time to take a dip. I put on my flippers and lucky @input and waded in'),
+(18, 2, 8, 'Adjective', 'to the @input, blue ocean water. The water was freezing!'),
+(19, 2, 9, 'Sport', '“Oh well,” I thought to myself. “Maybe I’ll find someone on the beach who wants to play @input with me.”'),
+(20, 2, 10, 'Beverage', 'I walked up and down the beach, but couldn’t find anyone who was interested. Defeated, I packed up my beach bag and headed to the boardwalk. I found a bar with great pizza and half off glasses of @input. It wasn’t the day I imagined, but I still had a pretty good time.'),
 
 /* The Big Game */
 (21, 3, 1, 'adj', ''),
