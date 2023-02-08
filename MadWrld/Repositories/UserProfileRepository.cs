@@ -19,7 +19,7 @@ namespace MadWrld.Repositories
                     cmd.CommandText = @"
                         SELECT up.Id, Up.FirebaseUserId, up.FirstName, up.LastName, up.Email
                           FROM UserProfile up
-                         WHERE FirebaseUserId = @FirebaseuserId";
+                         WHERE Up.FirebaseUserId = @FirebaseUserId";
 
                     DbUtils.AddParameter(cmd, "@FirebaseUserId", firebaseUserId);
 

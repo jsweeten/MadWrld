@@ -1,0 +1,39 @@
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    border: 4px solid black;
+    border-radius: 20px;
+    padding: 2px 8px;
+    list-style-type: none;
+    background-color: cornsilk;
+    margin: 1%;
+}
+
+a:link {
+    text-decoration: none;
+    color: black;
+}
+
+a:visited {
+    text-decoration: none;
+    color: black;
+}
+
+a:hover {
+    text-decoration: none;
+    color: black;
+}
+
+a:active {
+    text-decoration: none;
+    color: black;
+}
+
+.logo-container {
+    text-align: center;
+}
+
+.logo {
+    width: 40%;
+    height: 70px;
+}

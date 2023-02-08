@@ -13,7 +13,7 @@ export default function Login() {
     e.preventDefault();
     login(email, password)
       .then(() => navigate("/"))
-      .catch(() => alert("Invalid email or password"));
+      .catch(() => console.log("Invalid email or password"));
   };
 
   return (
