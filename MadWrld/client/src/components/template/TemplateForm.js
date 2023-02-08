@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Form, FormGroup, Input, Label } from "reactstrap"
-import { getTemplateById } from "../../modules/templateManager";
+import { getTemplateById, addMadLib } from "../../modules/templateManager";
 import "./Template.css";
 
 export default function TemplateForm() {
@@ -46,23 +46,12 @@ export default function TemplateForm() {
     
     const wordsNeeded = currentTemplate?.answerTemplates?.map(answerTemplate =>
         answerTemplate?.partOfSpeech)
+
+    const answerArray = [input1,input2,input3,input4,input5,input6,input7,input8,input9,input10]
         
     const submitTemplate = (e) => {
         e.preventDefault();
-            const completedMadLib = {
-                firstInput: input1,
-                secondInput: input2,
-                thirdInput: input3,
-                fourthInput: input4,
-                fifthInput: input5,
-                sixthInput: input6,
-                seventhInput: input7,
-                eighthInput: input8,
-                ninthInput: input9,
-                tenthInput: input10 
-            }
-
-        //   AddMadLib(completedMadLib).then((MLData) => {navigate(`/madlibdetails/${MLData.id}`)});
+        addMadLib(answerArray, currentTemplate.id).then((MLData) => {navigate("/userposts")});
       };
 
     return (

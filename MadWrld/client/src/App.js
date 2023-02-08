@@ -1,14 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import { BrowserRouter as Router } from "react-router-dom";
-import { Spinner } from 'reactstrap';
+import React, { useEffect, useState } from "react";
+import "./App.css";
+import { Spinner } from "reactstrap";
 import Header from "./components/nav/Header";
 import ApplicationViews from "./components/ApplicationViews";
+import { BrowserRouter } from "react-router-dom";
 import { onLoginStatusChange } from "./modules/authManager";
-import "./App.css"
-
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(null)
+  const [isLoggedIn, setIsLoggedIn] = useState(null);
 
   useEffect(() => {
     onLoginStatusChange(setIsLoggedIn);
@@ -22,10 +21,12 @@ function App() {
   }
 
   return (
-    <Router>
-      <Header isLoggedIn={isLoggedIn} />
-      <ApplicationViews isLoggedIn={isLoggedIn} />
-    </Router>
+    <div className="App">
+      <BrowserRouter>
+        <Header isLoggedIn={isLoggedIn} />
+        <ApplicationViews isLoggedIn={isLoggedIn} />
+      </BrowserRouter>
+    </div>
   );
 }
 

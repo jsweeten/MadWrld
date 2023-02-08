@@ -17,30 +17,23 @@ export default function ApplicationViews({ isLoggedIn }) {
         <Route path="/">
           <Route
             index
-            element={ //isLoggedIn ?
-              <MadLibList />
-              // : <Navigate to="/login" />
-            }/>
-          <Route path="madlibdetails/:id" element={isLoggedIn ? <MadLibDetails /> : <Navigate to="/login" />} />
-
-          <Route path="mymadlibs" element={ // isLoggedIn ?
-            <UserMadLibs />
-            // : <Navigate to="/login" />
-          } />
+            element={ isLoggedIn ? <MadLibList /> : <Navigate to="/login" /> }
+          />
+          <Route path="madlibs" element={isLoggedIn ? <MadLibList /> : <Navigate to="/login" />} />
+          <Route path="userposts" element={ isLoggedIn ? <UserMadLibs /> : <Navigate to="/login" /> }/>
+          <Route path="madlibs/:id" element={ isLoggedIn ? <MadLibDetails /> : <Navigate to="/login" /> }/>
 
           <Route path="templates">
             <Route index
-              element={
-                // isLoggedIn ? <ListTemplates /> : <Navigate to="/login" />
-                < ListTemplates />}/>
+              element={ isLoggedIn ? <ListTemplates /> : <Navigate to="/login" /> }
+            />
+          <Route path=":id" element={ isLoggedIn ? < TemplateForm /> : <Navigate to="/login" /> } />
           </Route>
-          <Route path="templates/:id" element={// isLoggedIn ?
-          < TemplateForm /> } />
 
           <Route path="users">
             <Route index
-              element={<ListUsers />} />
-            <Route path=":id" element={<UserDetails />} />
+              element={ isLoggedIn ? <ListUsers /> : <Navigate to="/login" /> } />
+            <Route path=":id"  element={ isLoggedIn ? < UserDetails /> : <Navigate to="/login" /> } />
           </Route>
 
           <Route path="login" element={<Login />} />
