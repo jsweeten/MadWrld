@@ -17,8 +17,9 @@ namespace MadWrld.Repositories
                 using (var cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"
-                        SELECT up.Id, Up.FirebaseUserId, up.FirstName, up.LastName, up.Email
+                        SELECT up.Id, Up.FirebaseUserId, up.FirstName, up.LastName, up.Email, up.UserTypeId, ut.[Id], ut.[Name]
                           FROM UserProfile up
+                          LEFT JOIN UserType ut ON up.UserTypeId = ut.[Id]
                          WHERE Up.FirebaseUserId = @FirebaseUserId";
 
                     DbUtils.AddParameter(cmd, "@FirebaseUserId", firebaseUserId);
@@ -34,7 +35,11 @@ namespace MadWrld.Repositories
                             FirebaseUserId = DbUtils.GetString(reader, "FirebaseUserId"),
                             FirstName = DbUtils.GetString(reader, "FirstName"),
                             LastName = DbUtils.GetString(reader, "LastName"),
-                            Email = DbUtils.GetString(reader, "Email")
+                            Email = DbUtils.GetString(reader, "Email"),
+                            UserType = new UserType()
+                            {
+                                Name = DbUtils.GetString(reader, "Name")
+                            }
                         };
                     }
                     reader.Close();
@@ -52,9 +57,10 @@ namespace MadWrld.Repositories
                 using (var cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"
-                        SELECT up.Id, Up.FirebaseUserId, up.FirstName, up.LastName, up.Email
-                          FROM UserProfile up
-                         WHERE up.Id = @id";
+                        SELECT up.Id, Up.FirebaseUserId, up.FirstName, up.LastName, up.Email, up.UserTypeId, ut.[Id], ut.[Name]
+                        FROM UserProfile up
+                        LEFT JOIN UserType ut ON up.UserTypeId = ut.[Id]
+                        WHERE up.Id = @id";
 
                     DbUtils.AddParameter(cmd, "@id", id);
 
@@ -69,7 +75,11 @@ namespace MadWrld.Repositories
                             FirebaseUserId = DbUtils.GetString(reader, "FirebaseUserId"),
                             FirstName = DbUtils.GetString(reader, "FirstName"),
                             LastName = DbUtils.GetString(reader, "LastName"),
-                            Email = DbUtils.GetString(reader, "Email")
+                            Email = DbUtils.GetString(reader, "Email"),
+                            UserType = new UserType()
+                            {
+                                Name = DbUtils.GetString(reader, "Name")
+                            }
                         };
                     }
                     reader.Close();
@@ -86,8 +96,10 @@ namespace MadWrld.Repositories
                 conn.Open();
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = @"SELECT up.Id, Up.FirebaseUserId, up.FirstName, up.LastName, up.Email
-                                        FROM UserProfile up";
+                    cmd.CommandText = @"
+                        SELECT up.Id, Up.FirebaseUserId, up.FirstName, up.LastName, up.Email, up.UserTypeId, ut.[Id], ut.[Name]
+                        FROM UserProfile up
+                        LEFT JOIN UserType ut ON up.UserTypeId = ut.[Id]";
 
                     using (SqlDataReader reader = cmd.ExecuteReader())
                     {
@@ -100,7 +112,11 @@ namespace MadWrld.Repositories
                                 FirebaseUserId = DbUtils.GetString(reader, "FirebaseUserId"),
                                 FirstName = DbUtils.GetString(reader, "FirstName"),
                                 LastName = DbUtils.GetString(reader, "LastName"),
-                                Email = DbUtils.GetString(reader, "Email")
+                                Email = DbUtils.GetString(reader, "Email"),
+                                UserType = new UserType()
+                                {
+                                    Name = DbUtils.GetString(reader, "Name")
+                                }
                             });
                         }
                         return users;
@@ -116,13 +132,14 @@ namespace MadWrld.Repositories
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = @"INSERT INTO UserProfile (FirebaseUserId, FirstName, LastName, Email)
+                    cmd.CommandText = @"INSERT INTO UserProfile (FirebaseUserId, FirstName, LastName, Email, UserTypeId)
                                         OUTPUT INSERTED.ID
-                                        VALUES (@FirebaseUserId, @FirstName, @LastName, @Email)";
+                                        VALUES (@FirebaseUserId, @FirstName, @LastName, @Email, @UserTypeId)";
                     DbUtils.AddParameter(cmd, "@FirebaseUserId", userProfile.FirebaseUserId);
                     DbUtils.AddParameter(cmd, "@FirstName", userProfile.FirstName);
                     DbUtils.AddParameter(cmd, "@LastName", userProfile.LastName);
                     DbUtils.AddParameter(cmd, "@Email", userProfile.Email);
+                    DbUtils.AddParameter(cmd, "@UserTypeId", userProfile.UserTypeId);
 
                     userProfile.Id = (int)cmd.ExecuteScalar();
                 }
@@ -138,13 +155,15 @@ namespace MadWrld.Repositories
                 {
                     cmd.CommandText = @"UPDATE UserProfile
                                         SET FirstName = @firstName,
-                                            LastName = @lastName,
-                                            Email = @email
+                                        LastName = @lastName,
+                                        Email = @email,
+                                        UserTypeId = @userTypeId
                                         WHERE Id = @id";
                     DbUtils.AddParameter(cmd, "@firstName", userProfile.FirstName);
                     DbUtils.AddParameter(cmd, "@lastName", userProfile.LastName);
                     DbUtils.AddParameter(cmd, "@email", userProfile.Email);
                     DbUtils.AddParameter(cmd, "@id", userProfile.Id);
+                    DbUtils.AddParameter(cmd, "@userTypeId", userProfile.UserTypeId);
 
                     cmd.ExecuteNonQuery();
                 }

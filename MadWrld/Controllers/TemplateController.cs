@@ -1,21 +1,29 @@
-﻿using MadWrld.Models;
-using MadWrld.Repositories;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Security.Claims;
+using MadWrld.Models;
+using MadWrld.Repositories;
+using System.Collections.Generic;
+using System;
 
 namespace MadWrld.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    // [Authorize]
     public class TemplateController : ControllerBase
     {
         private readonly IMLTemplateRepository _mlTemplateRepository;
-        public TemplateController(IMLTemplateRepository mlTemplateRepository)
+        private readonly IUserProfileRepository _userProfileRepository;
+        private readonly IMadLibRepository _madlibRepository;
+        public TemplateController(
+            IMLTemplateRepository mlTemplateRepository,
+            IUserProfileRepository userProfileRepository,
+            IMadLibRepository madlibRepository)
         {
             _mlTemplateRepository = mlTemplateRepository;
+            _userProfileRepository = userProfileRepository;
+            _madlibRepository = madlibRepository;
         }
         // GET: api/<TemplateController>
         [HttpGet]
@@ -28,16 +36,61 @@ namespace MadWrld.Controllers
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
-            return Ok(_mlTemplateRepository.GetById(id));
+            var template = _mlTemplateRepository.GetById(id);
+            if (template == null)
+            {
+                return NotFound();
+            }
+            return Ok(template);
         }
 
         // POST api/<TemplateController>
         [HttpPost]
-        public IActionResult Post(MLTemplate template)
+        public IActionResult PostTemplate(MLTemplate template)
         {
+            var currentUserProfile = GetCurrentUserProfile();
+            if (currentUserProfile.UserType.Name != "Admin")
+            {
+                return Unauthorized();
+            }
+
+            template.UserId = currentUserProfile.Id; 
             _mlTemplateRepository.Add(template);
             return CreatedAtAction(
-            nameof(Get), template);
+            nameof(Get), new { id = template.Id }, template);
+        }
+        
+        // POST api/<TemplateController>
+        [HttpPost("madlibform/{templateid}")]
+        public IActionResult PostMadLib(List<string> inputs, int templateId)
+        {
+            var currentUserProfile = GetCurrentUserProfile();
+            if (currentUserProfile.UserType.Name != "Admin")
+            {
+                return Unauthorized();
+            }
+            var currentTemplate = _mlTemplateRepository.GetById(templateId);
+            
+            var completedMadLib = new MadLib();
+
+            try
+            {
+                for (var i = 0; i < 10; i++)
+                {
+                    string newSentence = currentTemplate.AnswerTemplates[i].Content.Replace("@input", inputs[i]);
+                    completedMadLib.Story += newSentence;
+                };
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+
+            completedMadLib.UserProfileId = currentUserProfile.Id;
+            completedMadLib.TemplateId = currentTemplate.Id;
+            _madlibRepository.Add(completedMadLib);
+            return CreatedAtAction(
+            nameof(Get), new { id = completedMadLib.Id }, completedMadLib);
         }
 
         // PUT api/<TemplateController>/5
@@ -60,6 +113,12 @@ namespace MadWrld.Controllers
             _mlTemplateRepository.Remove(id);
 
             return NoContent();
+        }
+
+        private UserProfile GetCurrentUserProfile()
+        {
+            var firebaseUserId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            return _userProfileRepository.GetByFirebaseUserId(firebaseUserId);
         }
     }
 }

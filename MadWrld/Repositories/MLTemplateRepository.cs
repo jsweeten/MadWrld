@@ -21,10 +21,12 @@ namespace MadWrld.Repositories
                     cmd.CommandText = @"
                         SELECT t.[Id] 'Template', t.[Title], t.UserId,
                         at.[Id] 'AnswerTemplate', at.TemplateId, at.Position, at.PartOfSpeech, at.Content,
-                        up.[Id] 'User', up.FirstName, up.LastName, up.Email
+                        up.[Id] 'User', up.FirstName, up.LastName, up.Email, up.UserTypeId, ut.[Id], ut.[Name]
                         FROM MLTemplate t
                         LEFT JOIN UserProfile up
                         ON t.UserId = up.[Id]
+                        LEFT JOIN UserType ut
+                        ON up.UserTypeId = ut.[Id]
                         LEFT JOIN MLAnswerTemplate at
                         ON t.[Id] = at.TemplateId
                         WHERE t.[Id] = @id";
@@ -49,7 +51,11 @@ namespace MadWrld.Repositories
                                         Id = DbUtils.GetInt(reader, "User"),
                                         FirstName = DbUtils.GetString(reader, "FirstName"),
                                         LastName = DbUtils.GetString(reader, "LastName"),
-                                        Email = DbUtils.GetString(reader, "Email")
+                                        Email = DbUtils.GetString(reader, "Email"),
+                                        UserType = new UserType()
+                                        {
+                                            Name = DbUtils.GetString(reader, "Name")
+                                        }
                                     },
                                     AnswerTemplates = new List<MLAnswerTemplate>()
                                 };
@@ -81,10 +87,12 @@ namespace MadWrld.Repositories
                     cmd.CommandText = @"
                         SELECT t.[Id] 'Template', t.[Title], t.UserId,
                         at.[Id] 'AnswerTemplate', at.TemplateId, at.Position, at.PartOfSpeech, at.Content,
-                        up.[Id] 'User', up.FirstName, up.LastName, up.Email
+                        up.[Id] 'User', up.FirstName, up.LastName, up.Email, up.UserTypeId, ut.[Id], ut.[Name]
                         FROM MLTemplate t
                         LEFT JOIN UserProfile up
                         ON t.UserId = up.[Id]
+                        LEFT JOIN UserType ut
+                        ON up.UserTypeId = ut.[Id]
                         LEFT JOIN MLAnswerTemplate at
                         ON t.[Id] = at.TemplateId";
 
@@ -108,7 +116,11 @@ namespace MadWrld.Repositories
                                         Id = DbUtils.GetInt(reader, "User"),
                                         FirstName = DbUtils.GetString(reader, "FirstName"),
                                         LastName = DbUtils.GetString(reader, "LastName"),
-                                        Email = DbUtils.GetString(reader, "Email")
+                                        Email = DbUtils.GetString(reader, "Email"),
+                                        UserType = new UserType()
+                                        {
+                                            Name = DbUtils.GetString(reader, "Name")
+                                        }
                                     },
                                     AnswerTemplates = new List<MLAnswerTemplate>()
                                 };
@@ -143,7 +155,7 @@ namespace MadWrld.Repositories
                     cmd.CommandText = @"INSERT INTO MLTemplate ([Title], UserId)
                                         OUTPUT INSERTED.ID
                                         VALUES (@Title, @UserId)";
-                    DbUtils.AddParameter(cmd, "@LastName", template.Title);
+                    DbUtils.AddParameter(cmd, "@Title", template.Title);
                     DbUtils.AddParameter(cmd, "@UserId", template.UserId);
 
                     template.Id = (int)cmd.ExecuteScalar();
