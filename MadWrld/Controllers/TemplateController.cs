@@ -16,14 +16,17 @@ namespace MadWrld.Controllers
         private readonly IMLTemplateRepository _mlTemplateRepository;
         private readonly IUserProfileRepository _userProfileRepository;
         private readonly IMadLibRepository _madlibRepository;
+        private readonly IMLAnswerTemplateRepository _mlAnswerTemplateRepository;
         public TemplateController(
             IMLTemplateRepository mlTemplateRepository,
             IUserProfileRepository userProfileRepository,
-            IMadLibRepository madlibRepository)
+            IMadLibRepository madlibRepository,
+            IMLAnswerTemplateRepository mlAnswerTemplateRepository)
         {
             _mlTemplateRepository = mlTemplateRepository;
             _userProfileRepository = userProfileRepository;
             _madlibRepository = madlibRepository;
+            _mlAnswerTemplateRepository = mlAnswerTemplateRepository;
         }
         // GET: api/<TemplateController>
         [HttpGet]
@@ -58,6 +61,15 @@ namespace MadWrld.Controllers
             _mlTemplateRepository.Add(template);
             return CreatedAtAction(
             nameof(Get), new { id = template.Id }, template);
+        }
+        
+        // POST api/<TemplateController>
+        [HttpPost("answertemplate")]
+        public IActionResult PostAnswerTemplate(MLAnswerTemplate sentence)
+        {
+            _mlAnswerTemplateRepository.Add(sentence);
+            return CreatedAtAction(
+            nameof(Get), new { id = sentence.Id }, sentence);
         }
         
         // POST api/<TemplateController>

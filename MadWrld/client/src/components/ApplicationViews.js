@@ -7,8 +7,10 @@ import MadLibDetails from "./madlib/MadLibDetails";
 import UserMadLibs from "./madlib/UserMadLibs";
 import UserDetails from "./user/UserDetails";
 import ListUsers from "./user/ListUsers";
-import ListTemplates from "./template/ListTemplates";
+import CreateTemplate from "./template/CreateTemplate";
 import TemplateForm from "./template/TemplateForm";
+import CategoryList from "./category/CategoryList";
+import CategoryDetails from "./category/CategoryDetails";
 
 export default function ApplicationViews({ isLoggedIn }) {
   return (
@@ -23,12 +25,14 @@ export default function ApplicationViews({ isLoggedIn }) {
           <Route path="userposts" element={ isLoggedIn ? <UserMadLibs /> : <Navigate to="/login" /> }/>
           <Route path="madlibs/:id" element={ isLoggedIn ? <MadLibDetails /> : <Navigate to="/login" /> }/>
 
-          <Route path="templates">
+          <Route path="category">
             <Route index
-              element={ isLoggedIn ? <ListTemplates /> : <Navigate to="/login" /> }
+              element={ isLoggedIn ? <CategoryList /> : <Navigate to="/login" /> }
             />
-          <Route path=":id" element={ isLoggedIn ? < TemplateForm /> : <Navigate to="/login" /> } />
           </Route>
+          <Route path="category/:id" element={ isLoggedIn ? < CategoryDetails /> : <Navigate to="/login" /> } />
+          <Route path="templates/:id" element={ isLoggedIn ? < TemplateForm /> : <Navigate to="/login" /> } />
+          <Route path="templates/create" element={ isLoggedIn ? < CreateTemplate /> : <Navigate to="/login" /> } />
 
           <Route path="users">
             <Route index

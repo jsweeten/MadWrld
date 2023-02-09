@@ -19,16 +19,16 @@ namespace MadWrld.Repositories
                 using (var cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"
-                        SELECT t.[Id] 'Template', t.[Title], t.UserId,
-                        at.[Id] 'AnswerTemplate', at.TemplateId, at.Position, at.PartOfSpeech, at.Content,
-                        up.[Id] 'User', up.FirstName, up.LastName, up.Email, up.UserTypeId, ut.[Id], ut.[Name]
+                        SELECT t.[Id] 'TemplatePK', t.[Title], t.UserId,
+                        at.[Id] 'AnswerTemplatePK', at.TemplateId, at.Position, at.PartOfSpeech, at.Content,
+                        up.[Id] 'UserPK', up.FirstName, up.LastName, up.Email, up.UserTypeId, ut.[Id], ut.[Name] 'UserType',
+                        c.[Id] 'CategoryPK', c.[Name] 'CategoryName', ct.CategoryId 'CTCategoryId', ct.TemplateId 'CTTemplateId'
                         FROM MLTemplate t
-                        LEFT JOIN UserProfile up
-                        ON t.UserId = up.[Id]
-                        LEFT JOIN UserType ut
-                        ON up.UserTypeId = ut.[Id]
-                        LEFT JOIN MLAnswerTemplate at
-                        ON t.[Id] = at.TemplateId
+                        LEFT JOIN UserProfile up ON t.UserId = up.[Id]
+                        LEFT JOIN UserType ut ON up.UserTypeId = ut.[Id]
+                        LEFT JOIN MLAnswerTemplate at ON t.[Id] = at.TemplateId
+                        JOIN CategoryTemplate ct ON t.[Id] = ct.TemplateId
+                        JOIN Category c ON ct.CategoryId = c.[Id]
                         WHERE t.[Id] = @id";
 
                     DbUtils.AddParameter(cmd, "@id", id);
@@ -43,32 +43,41 @@ namespace MadWrld.Repositories
                             {
                                 template = new MLTemplate()
                                 {
-                                    Id = DbUtils.GetInt(reader, "Template"),
+                                    Id = DbUtils.GetInt(reader, "TemplatePK"),
                                     Title = DbUtils.GetString(reader, "Title"),
                                     UserId = DbUtils.GetInt(reader, "UserId"),
                                     User = new UserProfile()
                                     {
-                                        Id = DbUtils.GetInt(reader, "User"),
+                                        Id = DbUtils.GetInt(reader, "UserPK"),
                                         FirstName = DbUtils.GetString(reader, "FirstName"),
                                         LastName = DbUtils.GetString(reader, "LastName"),
                                         Email = DbUtils.GetString(reader, "Email"),
                                         UserType = new UserType()
                                         {
-                                            Name = DbUtils.GetString(reader, "Name")
+                                            Name = DbUtils.GetString(reader, "UserType")
                                         }
                                     },
-                                    AnswerTemplates = new List<MLAnswerTemplate>()
+                                    AnswerTemplates = new List<MLAnswerTemplate>(),
+                                    Categories= new List<Category>()
                                 };
                             }
-                            if (DbUtils.IsNotDbNull(reader, "AnswerTemplate"))
+                            if (DbUtils.IsNotDbNull(reader, "AnswerTemplatePK"))
                             {
                                 template.AnswerTemplates.Add(new MLAnswerTemplate()
                                 {
-                                    Id = DbUtils.GetInt(reader, "AnswerTemplate"),
+                                    Id = DbUtils.GetInt(reader, "AnswerTemplatePK"),
                                     TemplateId = DbUtils.GetInt(reader, "TemplateId"),
                                     Position = DbUtils.GetInt(reader, "Position"),
                                     PartOfSpeech = DbUtils.GetString(reader, "PartofSpeech"),
                                     Content = DbUtils.GetString(reader, "Content")
+                                });
+                            }
+                            if (DbUtils.IsNotDbNull(reader, "CategoryPK"))
+                            {
+                                template.Categories.Add(new Category()
+                                {
+                                    Id = DbUtils.GetInt(reader, "CategoryPK"),
+                                    Name = DbUtils.GetString(reader, "CategoryName")
                                 });
                             }
                         }
@@ -85,57 +94,66 @@ namespace MadWrld.Repositories
                 using (var cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"
-                        SELECT t.[Id] 'Template', t.[Title], t.UserId,
-                        at.[Id] 'AnswerTemplate', at.TemplateId, at.Position, at.PartOfSpeech, at.Content,
-                        up.[Id] 'User', up.FirstName, up.LastName, up.Email, up.UserTypeId, ut.[Id], ut.[Name]
+                        SELECT t.[Id] 'TemplatePK', t.[Title], t.UserId,
+                        at.[Id] 'AnswerTemplatePK', at.TemplateId, at.Position, at.PartOfSpeech, at.Content,
+                        up.[Id] 'UserPK', up.FirstName, up.LastName, up.Email, up.UserTypeId, ut.[Id], ut.[Name] 'UserType',
+                        c.[Id] 'CategoryPK', c.[Name] 'CategoryName', ct.CategoryId 'CTCategoryId', ct.TemplateId 'CTTemplateId'
                         FROM MLTemplate t
-                        LEFT JOIN UserProfile up
-                        ON t.UserId = up.[Id]
-                        LEFT JOIN UserType ut
-                        ON up.UserTypeId = ut.[Id]
-                        LEFT JOIN MLAnswerTemplate at
-                        ON t.[Id] = at.TemplateId";
+                        LEFT JOIN UserProfile up ON t.UserId = up.[Id]
+                        LEFT JOIN UserType ut ON up.UserTypeId = ut.[Id]
+                        LEFT JOIN MLAnswerTemplate at ON t.[Id] = at.TemplateId
+                        JOIN CategoryTemplate ct ON t.[Id] = ct.TemplateId
+                        JOIN Category c ON ct.CategoryId = c.[Id]";
 
                     using (SqlDataReader reader = cmd.ExecuteReader())
                     {
                         var templates = new List<MLTemplate>();
                         while (reader.Read())
                         {
-                            var templateId = DbUtils.GetInt(reader, "Template");
+                            var templateId = DbUtils.GetInt(reader, "TemplatePK");
 
-                            var existingTemplate = templates.FirstOrDefault(p => p.Id == templateId);
+                            var existingTemplate = templates.FirstOrDefault(t => t.Id == templateId);
                             if (existingTemplate == null)
                             {
                                 existingTemplate = new MLTemplate()
                                 {
-                                    Id = DbUtils.GetInt(reader, "Template"),
+                                    Id = DbUtils.GetInt(reader, "TemplatePK"),
                                     Title = DbUtils.GetString(reader, "Title"),
                                     UserId = DbUtils.GetInt(reader, "UserId"),
                                     User = new UserProfile()
                                     {
-                                        Id = DbUtils.GetInt(reader, "User"),
+                                        Id = DbUtils.GetInt(reader, "UserPK"),
                                         FirstName = DbUtils.GetString(reader, "FirstName"),
                                         LastName = DbUtils.GetString(reader, "LastName"),
                                         Email = DbUtils.GetString(reader, "Email"),
                                         UserType = new UserType()
                                         {
-                                            Name = DbUtils.GetString(reader, "Name")
+                                            Name = DbUtils.GetString(reader, "UserType")
                                         }
                                     },
-                                    AnswerTemplates = new List<MLAnswerTemplate>()
+                                    AnswerTemplates = new List<MLAnswerTemplate>(),
+                                    Categories = new List<Category>()
                                 };
                                 templates.Add(existingTemplate);
                             }
 
-                            if (DbUtils.IsNotDbNull(reader, "AnswerTemplate"))
+                            if (DbUtils.IsNotDbNull(reader, "AnswerTemplatePK"))
                             {
                                 existingTemplate.AnswerTemplates.Add(new MLAnswerTemplate()
                                 {
-                                    Id = DbUtils.GetInt(reader, "AnswerTemplate"),
+                                    Id = DbUtils.GetInt(reader, "AnswerTemplatePK"),
                                     TemplateId = DbUtils.GetInt(reader, "TemplateId"),
                                     Position = DbUtils.GetInt(reader, "Position"),
                                     PartOfSpeech = DbUtils.GetString(reader, "PartofSpeech"),
                                     Content = DbUtils.GetString(reader, "Content")
+                                });
+                            }
+                            if (DbUtils.IsNotDbNull(reader, "CategoryPK"))
+                            {
+                                existingTemplate.Categories.Add(new Category()
+                                {
+                                    Id = DbUtils.GetInt(reader, "CategoryPK"),
+                                    Name = DbUtils.GetString(reader, "CategoryName")
                                 });
                             }
                         }
