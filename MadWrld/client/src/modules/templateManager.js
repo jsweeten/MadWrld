@@ -108,3 +108,49 @@ export const addAnswerTemplate = (sentence) => {
       });
   });
 };
+
+export const editTemplate = (oldTitle, newTitle) => {
+  return getToken().then(token => {
+      return fetch(_apiUrl, {
+          method: "PUT",
+          headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json"
+          },
+          body: JSON.stringify(oldTitle, newTitle),
+      }).then((resp) => {
+        if (resp.ok) {
+          return resp.json();
+      } else if (resp.status === 401) {
+          throw new Error("Unauthorized");
+      } else {
+          throw new Error(
+          "An unknown error occurred while trying to save a new madlib.",
+          );
+      }
+      }); 
+  })
+}
+
+export const editAnswerTemplate = (answerTemplate) => {
+  return getToken().then(token => {
+      return fetch(`${_apiUrl}/answertemplate/${answerTemplate.id}`, {
+          method: "PUT",
+          headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json"
+          },
+          body: JSON.stringify(answerTemplate),
+          }).then((resp) => {
+            if (resp.ok) {
+              return resp.json();
+          } else if (resp.status === 401) {
+            throw new Error("Unauthorized");
+          } else {
+            throw new Error(
+            "An unknown error occurred while trying to save a new madlib.",
+            );
+          }
+      })
+  })
+}

@@ -30,5 +30,25 @@ namespace MadWrld.Repositories
                 }
             }
         }
+
+        public void Update(MLAnswerTemplate sentence)
+        {
+            using (var conn = Connection)
+            {
+                conn.Open();
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"UPDATE MLAnswerTemplate
+                                        SET Content = @Content,
+                                            PartOfSpeech = @PartOfSpeech
+                                        WHERE Id = @id";
+                    DbUtils.AddParameter(cmd, "@Content", sentence.Content);
+                    DbUtils.AddParameter(cmd, "@PartOfSpeech", sentence.PartOfSpeech);
+                    DbUtils.AddParameter(cmd, "@id", sentence.Id);
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
     }
 }

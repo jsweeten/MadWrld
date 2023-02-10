@@ -1,20 +1,19 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Form, FormGroup, Input, Label } from "reactstrap"
-import { addAnswerTemplate, addTemplate } from "../../modules/templateManager";
+import { addAnswerTemplate,
+    addTemplate, getTemplateById,
+    editTemplate, editAnswerTemplate } from "../../modules/templateManager";
 import { getCategories, addCategoryTemplate } from "../../modules/categoryManager";
 import "./Template.css";
 
 export default function CreateTemplate() {
-    const navigate = useNavigate();
+    const { existingTemplateId } = useParams(),
+        [ template, setTemplate ] = useState({}),
+        navigate = useNavigate();
+    const [ existingTemplate, setExistingTemplate ] = useState({})
     const [ categories, setCategories ] = useState([])
     const [ categoryChoicesArray, updateCategoryChoicesArray] = useState([])
-    const [ template, setTemplate ] = useState(
-        {
-            title: "",
-            userId: 0
-        })
-    
     const [ sentence1, setSentence1 ] = useState(
         {
             templateId: 0,
@@ -104,6 +103,29 @@ export default function CreateTemplate() {
         getAllCategories()
     }, []);
 
+    const getExistingTemplate = () => {
+        if (existingTemplateId) {
+        getTemplateById(existingTemplateId).then(templateData => 
+            setExistingTemplate(templateData))
+        }
+    }
+    
+    useEffect(() => {
+        getExistingTemplate()
+    }, []);
+
+    useEffect(() => {
+        sentences.forEach((s, i) => {
+            let input = setSentenceInputFunction(i)
+            input(
+                s.templateId = existingTemplate?.id,
+                s.content = existingTemplate?.answerTemplates[i]?.content,
+                s.partOfSpeech = existingTemplate?.answerTemplates[i]?.partOfSpeech
+            )
+        })
+        setTemplate(existingTemplate)
+    }, [ existingTemplate ])
+
     const sentences = [
         sentence1, sentence2,
         sentence3, sentence4,
@@ -189,16 +211,26 @@ export default function CreateTemplate() {
 
     const submitTemplate = (e) => {
         e.preventDefault();
-        addTemplate(template)
-        .then((templateData) => {
-            sentences.forEach((s) => {
-                s.templateId = templateData.id
-                addAnswerTemplate(s)})
-            categoryObjectArray.forEach((ct) => {
-                ct.templateId = templateData.id
-                addCategoryTemplate(ct)})
-        })
-        .then(() => {navigate(`/templates/${template?.id}`)})};
+
+        if (template.id) {
+            editTemplate(existingTemplate.title, template.title)
+            .then(sentences.forEach((s) => {
+                editAnswerTemplate(s)}))
+            .then(() => {navigate(`/templates/${template?.id}`)})
+        } else {
+            addTemplate(template)
+            .then((templateData) => {
+                sentences.forEach((s) => {
+                    s.templateId = templateData.id
+                    addAnswerTemplate(s)})
+                categoryObjectArray.forEach((ct) => {
+                    ct.templateId = templateData.id
+                    addCategoryTemplate(ct)})
+            })
+            .then(() => {navigate(`/templates/${template?.id}`)})
+        }
+
+    }
 
     return (
         <>

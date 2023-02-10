@@ -6,5 +6,6 @@ namespace MadWrld.Repositories
     public interface IMLAnswerTemplateRepository
     {
         void Add(MLAnswerTemplate sentence);
+        void Update(MLAnswerTemplate sentence);
     }
 }

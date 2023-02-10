@@ -8,7 +8,7 @@ namespace MadWrld.Repositories
         MLTemplate GetById(int id);
         List<MLTemplate> GetAll();
         void Add(MLTemplate template);
-        void Update(MLTemplate template);
+        void Update(string oldTitle, string newTitle);
         void Remove(int id);
     }
 }

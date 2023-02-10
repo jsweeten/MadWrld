@@ -18,18 +18,15 @@ namespace MadWrld.Repositories
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = @"
-                        SELECT t.[Id] 'TemplatePK', t.[Title], t.UserId,
+                    cmd.CommandText = @"SELECT
+                        t.[Id] 'TemplatePK', t.[Title], t.UserId,
                         at.[Id] 'AnswerTemplatePK', at.TemplateId, at.Position, at.PartOfSpeech, at.Content,
-                        up.[Id] 'UserPK', up.FirstName, up.LastName, up.Email, up.UserTypeId, ut.[Id], ut.[Name] 'UserType',
-                        c.[Id] 'CategoryPK', c.[Name] 'CategoryName', ct.CategoryId 'CTCategoryId', ct.TemplateId 'CTTemplateId'
+                        up.[Id] 'UserPK', up.FirstName, up.LastName, up.Email
                         FROM MLTemplate t
                         LEFT JOIN UserProfile up ON t.UserId = up.[Id]
-                        LEFT JOIN UserType ut ON up.UserTypeId = ut.[Id]
                         LEFT JOIN MLAnswerTemplate at ON t.[Id] = at.TemplateId
-                        JOIN CategoryTemplate ct ON t.[Id] = ct.TemplateId
-                        JOIN Category c ON ct.CategoryId = c.[Id]
-                        WHERE t.[Id] = @id";
+                        WHERE t.[Id] = @id
+                        ORDER BY at.Position";
 
                     DbUtils.AddParameter(cmd, "@id", id);
 
@@ -51,14 +48,9 @@ namespace MadWrld.Repositories
                                         Id = DbUtils.GetInt(reader, "UserPK"),
                                         FirstName = DbUtils.GetString(reader, "FirstName"),
                                         LastName = DbUtils.GetString(reader, "LastName"),
-                                        Email = DbUtils.GetString(reader, "Email"),
-                                        UserType = new UserType()
-                                        {
-                                            Name = DbUtils.GetString(reader, "UserType")
-                                        }
+                                        Email = DbUtils.GetString(reader, "Email")
                                     },
                                     AnswerTemplates = new List<MLAnswerTemplate>(),
-                                    Categories= new List<Category>()
                                 };
                             }
                             if (DbUtils.IsNotDbNull(reader, "AnswerTemplatePK"))
@@ -70,14 +62,6 @@ namespace MadWrld.Repositories
                                     Position = DbUtils.GetInt(reader, "Position"),
                                     PartOfSpeech = DbUtils.GetString(reader, "PartofSpeech"),
                                     Content = DbUtils.GetString(reader, "Content")
-                                });
-                            }
-                            if (DbUtils.IsNotDbNull(reader, "CategoryPK"))
-                            {
-                                template.Categories.Add(new Category()
-                                {
-                                    Id = DbUtils.GetInt(reader, "CategoryPK"),
-                                    Name = DbUtils.GetString(reader, "CategoryName")
                                 });
                             }
                         }
@@ -181,7 +165,7 @@ namespace MadWrld.Repositories
             }
         }
 
-        public void Update(MLTemplate template)
+        public void Update(string oldTitle, string newTitle)
         {
             using (var conn = Connection)
             {
@@ -189,12 +173,10 @@ namespace MadWrld.Repositories
                 using (var cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"UPDATE MLTemplate
-                                        SET Title = @title,
-                                            UserId = @userId
-                                        WHERE Id = @id";
-                    DbUtils.AddParameter(cmd, "@title", template.Title);
-                    DbUtils.AddParameter(cmd, "@userId", template.UserId);
-                    DbUtils.AddParameter(cmd, "@id", template.Id);
+                                        SET Title = @newTitle,
+                                        WHERE Title = @oldTitle";
+                    DbUtils.AddParameter(cmd, "@newTitle", newTitle);
+                    DbUtils.AddParameter(cmd, "@oldTitle", oldTitle);
 
                     cmd.ExecuteNonQuery();
                 }

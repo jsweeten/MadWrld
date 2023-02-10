@@ -51,7 +51,7 @@ export default function TemplateForm() {
         
     const submitTemplate = (e) => {
         e.preventDefault();
-        addMadLib(answerArray, currentTemplate.id).then((MLData) => {navigate("/userposts")});
+        addMadLib(answerArray, currentTemplate.id).then(() => {navigate("/userposts")});
       };
 
     return (

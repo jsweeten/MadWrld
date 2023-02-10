@@ -77,10 +77,7 @@ namespace MadWrld.Controllers
         public IActionResult PostMadLib(List<string> inputs, int templateId)
         {
             var currentUserProfile = GetCurrentUserProfile();
-            if (currentUserProfile.UserType.Name != "Admin")
-            {
-                return Unauthorized();
-            }
+
             var currentTemplate = _mlTemplateRepository.GetById(templateId);
             
             var completedMadLib = new MadLib();
@@ -106,15 +103,18 @@ namespace MadWrld.Controllers
         }
 
         // PUT api/<TemplateController>/5
-        [HttpPut("{id}")]
-        public IActionResult Edit(int id,MLTemplate template)
+        [HttpPut]
+        public IActionResult EditTemplate(string oldTitle, string newTitle)
         {
-            if (id != template.Id)
-            {
-                return BadRequest();
-            }
+            _mlTemplateRepository.Update(oldTitle, newTitle);
+            return NoContent();
+        }
 
-            _mlTemplateRepository.Update(template);
+        // PUT api/<TemplateController>/answertemplate/5
+        [HttpPost("answertemplate/{id}")]
+        public IActionResult EditAnswerTemplate(MLAnswerTemplate sentence)
+        {
+            _mlAnswerTemplateRepository.Update(sentence);
             return NoContent();
         }
 
