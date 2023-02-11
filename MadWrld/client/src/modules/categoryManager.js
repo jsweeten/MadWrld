@@ -37,8 +37,27 @@ export const getCategoryById = (id) => {
               );
             }
         });
-      });
-    }
+    });
+}
+
+export const getByTemplateId = (id) => {
+    return getToken().then((token) => {  
+        return fetch(`${_apiUrl}/categorytemplates/${id}`, {
+            method: 'GET',
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        }).then((res) => {
+            if (res.ok) {
+              return res.json();
+            } else {
+              throw new Error(
+                  "An unknown error occurred while trying to get template.",
+              );
+            }
+        });
+    });
+}
 
 export const addCategoryTemplate = (ct) => {
     return getToken().then((token) => {
@@ -59,5 +78,18 @@ export const addCategoryTemplate = (ct) => {
               }
           }
       )
+    })
+}
+
+export const deleteCategoryTemplate = (ct) => {
+    return getToken().then((token) => {
+      return fetch(`${_apiUrl}/categorytemplates`, {
+          method: "DELETE",
+          headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json"
+          },
+          body: JSON.stringify(ct),
+      })
     })
 }

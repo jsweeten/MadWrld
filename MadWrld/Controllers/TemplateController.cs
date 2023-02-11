@@ -8,7 +8,7 @@ using System;
 
 namespace MadWrld.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class TemplateController : ControllerBase
@@ -28,11 +28,14 @@ namespace MadWrld.Controllers
             _madlibRepository = madlibRepository;
             _mlAnswerTemplateRepository = mlAnswerTemplateRepository;
         }
+        
         // GET: api/<TemplateController>
-        [HttpGet]
-        public IActionResult GetAllTemplates()
+        [HttpGet("user")]
+        public IActionResult GetTemplatesByUser()
         {
-            return Ok(_mlTemplateRepository.GetAll());
+            var currentUser = GetCurrentUserProfile();
+
+            return Ok(_mlTemplateRepository.GetByUserId(currentUser.Id));
         }
 
         // GET api/<TemplateController>/5
@@ -103,19 +106,34 @@ namespace MadWrld.Controllers
         }
 
         // PUT api/<TemplateController>/5
-        [HttpPut]
-        public IActionResult EditTemplate(string oldTitle, string newTitle)
+        [HttpPut("{id}")]
+        public IActionResult EditTemplate(MLTemplate template)
         {
-            _mlTemplateRepository.Update(oldTitle, newTitle);
-            return NoContent();
+            try
+            {
+                _mlTemplateRepository.Update(template);
+
+                return NoContent();
+            }
+            catch
+            {
+                return BadRequest();
+            }
         }
 
         // PUT api/<TemplateController>/answertemplate/5
-        [HttpPost("answertemplate/{id}")]
+        [HttpPut("answertemplate/{id}")]
         public IActionResult EditAnswerTemplate(MLAnswerTemplate sentence)
         {
-            _mlAnswerTemplateRepository.Update(sentence);
-            return NoContent();
+            try
+            {
+                _mlAnswerTemplateRepository.Update(sentence);
+                return NoContent();
+            }
+            catch
+            {
+                return BadRequest();
+            }
         }
 
         // DELETE api/<TemplateController>/5

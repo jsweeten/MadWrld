@@ -166,15 +166,20 @@ namespace MadWrld.Repositories
             }
         }
         
-        public List<CategoryTemplate> GetCategoryTemplates()
+        public List<CategoryTemplate> GetCategoryTemplates(int id)
         {
             using (var conn = Connection)
             {
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = @"SELECT ct.[Id] 'CategoryTemplatePK', ct.TemplateId, ct.CategoryId
-                                        FROM CategoryTemplate ct";
+                    cmd.CommandText = @"SELECT ct.[Id] 'CategoryTemplatePK', ct.TemplateId, ct.CategoryId,
+                                        c.[Id] 'CategoryPK', c.[Name]
+                                        FROM CategoryTemplate ct
+                                        LEFT JOIN Category c ON ct.CategoryId = c.[Id]
+                                        WHERE ct.TemplateId = @id";
+
+                    DbUtils.AddParameter(cmd, "@id", id);
 
                     using (SqlDataReader reader = cmd.ExecuteReader())
                     {
@@ -190,13 +195,35 @@ namespace MadWrld.Repositories
                                 {
                                     Id = DbUtils.GetInt(reader, "CategoryTemplatePK"),
                                     TemplateId = DbUtils.GetInt(reader, "TemplateId"),
-                                    CategoryId = DbUtils.GetInt(reader, "CategoryId")
+                                    CategoryId = DbUtils.GetInt(reader, "CategoryId"),
+                                    CategoryName = new Category()
+                                    {
+                                        Name = DbUtils.GetString(reader, "Name")
+                                    }
                                 };
                                 categoryTemplates.Add(existingCategoryTemplate);
                             }
                         }
                         return categoryTemplates;
                     }
+                }
+            }
+        }
+
+        public void RemoveTemplateCategory(CategoryTemplate ct)
+        {
+            using (var conn = Connection)
+            {
+                conn.Open();
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"DELETE FROM CategoryTemplate
+                                        WHERE TemplateId = @tempId
+                                        AND CategoryId = @catId";
+                    DbUtils.AddParameter(cmd, "@tempId", ct.TemplateId);
+                    DbUtils.AddParameter(cmd, "@catId", ct.CategoryId);
+
+                    cmd.ExecuteNonQuery();
                 }
             }
         }

@@ -9,6 +9,7 @@ namespace MadWrld.Repositories
         List<Category> GetCategoryNames();
         Category GetById(int id);
         void AddCategoryTemplate(CategoryTemplate categoryTemplate);
-        List<CategoryTemplate> GetCategoryTemplates();
+        List<CategoryTemplate> GetCategoryTemplates(int id);
+        void RemoveTemplateCategory(CategoryTemplate ct);
     }
 }

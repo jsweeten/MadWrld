@@ -11,6 +11,15 @@ SELECT t.[Id] 'TemplatePK', t.[Title], t.UserId,
 
 SELECT * FROM MadLib WHERE MLTemplateId = 15; 
 
-UPDATE MLAnswerTemplate
-SET Content = 'Howdy ho everybody! My name is @input and I would love to talk to you '
-WHERE Id = 111;
+SELECT ct.[Id] 'CategoryTemplatePK', ct.TemplateId, ct.CategoryId,
+                                        c.[Id] 'CategoryPK', c.[Name]
+                                        FROM CategoryTemplate ct
+                                        LEFT JOIN Category c ON ct.CategoryId = c.[Id]
+                                        WHERE ct.TemplateId = 1;
+
+SELECT * FROM CategoryTemplate;
+
+
+DELETE FROM CategoryTemplate
+WHERE TemplateId = 16
+AND CategoryId = 6;

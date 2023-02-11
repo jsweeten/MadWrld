@@ -19,7 +19,7 @@ export default function CategoryList() {
     return (
         <section>
             <div>
-                <header>Choose A Category</header>
+                <header>Choose A Template From The Categories Below...</header>
             </div>
             <div className="category-container">
                 {categoryList?.map(category => 
@@ -29,6 +29,9 @@ export default function CategoryList() {
                         </Link>
                     </Card>
                 )}
+            </div>
+            <div>
+                <h3>...Or <Link to="/templates/create">Click Here</Link> To Create Your Very Own Template!</h3>
             </div>
         </section>
     )

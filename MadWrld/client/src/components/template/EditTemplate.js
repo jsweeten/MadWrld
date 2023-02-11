@@ -1,17 +1,22 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { Form, FormGroup, Input, Label } from "reactstrap"
-import { addAnswerTemplate, addTemplate } from "../../modules/templateManager";
-import { getCategories, addCategoryTemplate } from "../../modules/categoryManager";
+import { useNavigate, useParams } from "react-router-dom";
+import { Form, FormGroup, Input, Label, Button } from "reactstrap"
+import { getTemplateById, editTemplate, editAnswerTemplate, deleteTemplate } from "../../modules/templateManager";
+import { getCategories, getByTemplateId, addCategoryTemplate, deleteCategoryTemplate } from "../../modules/categoryManager";
 import "./Template.css";
 
-export default function CreateTemplate() {
+export default function EditTemplate() {
     const navigate = useNavigate();
+    const { existingTemplateId } = useParams();
+    const [ existingTemplate, setExistingTemplate ] = useState({});
     const [ template, setTemplate ] = useState({});
     const [ categories, setCategories ] = useState([]);
-    const [ categoryChoicesArray, updateCategoryChoicesArray] = useState([]);
+    const [ oldCategoryArray, setOldCategoryArray] = useState([]);
+    const [ newCategoryArray, setNewCategoryArray] = useState([]);
+    
     const [ sentence1, setSentence1 ] = useState(
         {
+            id: 0,
             templateId: 0,
             position: 1,
             content: "",
@@ -20,6 +25,7 @@ export default function CreateTemplate() {
     )
     const [ sentence2, setSentence2 ] = useState(
         {
+            id: 0,
             templateId: 0,
             position: 2,
             content: "",
@@ -28,6 +34,7 @@ export default function CreateTemplate() {
     )
     const [ sentence3, setSentence3 ] = useState(
         {
+            id: 0,
             templateId: 0,
             position: 3,
             content: "",
@@ -36,6 +43,7 @@ export default function CreateTemplate() {
     )
     const [ sentence4, setSentence4 ] = useState(
         {
+            id: 0,
             templateId: 0,
             position: 4,
             content: "",
@@ -44,6 +52,7 @@ export default function CreateTemplate() {
     )
     const [ sentence5, setSentence5 ] = useState(
         {
+            id: 0,
             templateId: 0,
             position: 5,
             content: "",
@@ -52,6 +61,7 @@ export default function CreateTemplate() {
     )
     const [ sentence6, setSentence6 ] = useState(
         {
+            id: 0,
             templateId: 0,
             position: 6,
             content: "",
@@ -60,6 +70,7 @@ export default function CreateTemplate() {
     )
     const [ sentence7, setSentence7 ] = useState(
         {
+            id: 0,
             templateId: 0,
             position: 7,
             content: "",
@@ -68,6 +79,7 @@ export default function CreateTemplate() {
     )
     const [ sentence8, setSentence8 ] = useState(
         {
+            id: 0,
             templateId: 0,
             position: 8,
             content: "",
@@ -76,6 +88,7 @@ export default function CreateTemplate() {
     )
     const [ sentence9, setSentence9 ] = useState(
         {
+            id: 0,
             templateId: 0,
             position: 9,
             content: "",
@@ -84,6 +97,7 @@ export default function CreateTemplate() {
     )
     const [ sentence10, setSentence10 ] = useState(
         {
+            id: 0,
             templateId: 0,
             position: 10,
             content: "",
@@ -95,9 +109,43 @@ export default function CreateTemplate() {
         getCategories().then(data => setCategories(data));
     }
 
+    const getExistingTemplate = () => {
+        getTemplateById(existingTemplateId).then(templateData => 
+            setExistingTemplate(templateData))
+    }
+
+    const getTemplateCategories = () => {
+        getByTemplateId(existingTemplateId)
+        .then(categoryData => 
+            (categoryData.forEach(c =>
+                setOldCategoryArray(previousState =>
+                    [...previousState, c.categoryId])
+            ))
+        )
+    }
+
     useEffect(() => {
         getAllCategories()
+        getExistingTemplate()
+        getTemplateCategories()
     }, []);
+
+    useEffect(() => {
+        setNewCategoryArray(oldCategoryArray)
+    }, [oldCategoryArray]);
+
+
+    useEffect(() => {
+        setTemplate(existingTemplate)
+        sentences.forEach((s, i) => { 
+            let copy = {...s}
+            copy.content = existingTemplate?.answerTemplates?.at(i).content
+            copy.partOfSpeech = existingTemplate?.answerTemplates?.at(i).partOfSpeech
+            copy.templateId = existingTemplate?.id
+            copy.id = existingTemplate?.answerTemplates?.at(i).id
+            let input = setSentenceInputFunction(i)
+            input(copy)})
+        }, [ existingTemplate ])
 
     const sentences = [
         sentence1, sentence2,
@@ -115,6 +163,7 @@ export default function CreateTemplate() {
         <FormGroup key={`sentence--${i}`}>
             <Label>Sentence {i + 1}</Label>
             <Input
+            value={sentence.content}
             type="text"
             onChange={(e) => {
                 let copy = {...sentence}
@@ -124,6 +173,7 @@ export default function CreateTemplate() {
             />
             <Label>Part of Speech:</Label>
             <Input
+            value={sentence.partOfSpeech}
             type="text"
             onChange={(e) => {
                 let copy = {...sentence}
@@ -140,11 +190,12 @@ export default function CreateTemplate() {
                 <Label>{c.name}</Label>
                 <Input
                 type="checkbox"
+                checked={newCategoryArray.includes(c.id)}
                 value={c.id}
                 onChange={
                     (evt) => {
-                        if (!categoryChoicesArray.includes(evt.target.value)) {
-                            updateCategoryChoicesArray(previousState => [...previousState, evt.target.value])
+                        if (!newCategoryArray.includes(parseInt(evt.target.value))) {
+                            setNewCategoryArray(previousState => [...previousState, parseInt(evt.target.value)])
                         } else {
                             categoryDelete(evt)
                         }
@@ -167,39 +218,56 @@ export default function CreateTemplate() {
     }
 
     const categoryDelete = (evt) => {
-        const copy = [...categoryChoicesArray]
-        const index = copy.indexOf(evt.target.value)
+        const copy = [...newCategoryArray]
+        const index = copy.indexOf(parseInt(evt.target.value))
         if (index > -1) {
             copy.splice(index, 1)
-            updateCategoryChoicesArray(copy)
+            setNewCategoryArray(copy)
         }
     }
 
-    const categoryObjectArray = categoryChoicesArray.map((c) => {
-        return {
-            templateId: null,
-            categoryId: c
-        }
-    })
+    
+    const categoryHelper = (template) => {
+        oldCategoryArray.map(c => {
+            if (!newCategoryArray.includes(c)) {
+                const newCategoryTemplate = {
+                    templateId: template.id,
+                    categoryId: c
+                    }
+                deleteCategoryTemplate(newCategoryTemplate)
+            }
+        })
+        newCategoryArray.map(c => {
+            if (!oldCategoryArray.includes(c)) {
+                const newCategoryTemplate = {
+                templateId: template.id,
+                categoryId: c
+                }
+                addCategoryTemplate(newCategoryTemplate)
+            }
+        })
+    }
 
     const submitTemplate = (e) => {
         e.preventDefault();
-        addTemplate(template)
-            .then((templateData) => {
-                sentences.forEach((s) => {
-                    s.templateId = templateData.id
-                    addAnswerTemplate(s)})
-                categoryObjectArray.forEach((ct) => {
-                    ct.templateId = templateData.id
-                    addCategoryTemplate(ct)}
-                )})
+        editTemplate(template)
+            .then(sentences.forEach((s) => {
+                editAnswerTemplate(s)}))
+            .then(categoryHelper(template))
             .then(() => {navigate(`/templates/${template?.id}`)
-            })
+        })
+    }
+
+    const deleteFunction = () => {
+        const confirmation = window.confirm('Are you sure you want to delete this template?')
+        if (confirmation) {
+            deleteTemplate(existingTemplateId).then(window.alert('Template has been deleted!')).then(navigate('/userposts'))
+        }
     }
 
     return (
         <>
-            <header>Create A Template of Your Own!</header>
+            <header>Edit Template</header>
             
             <h4>How this works:</h4>
             
@@ -217,9 +285,12 @@ export default function CreateTemplate() {
                 <FormGroup>
                     <Label>Title</Label>
                     <Input
-                    placeholder="Title"
-                    onChange={(e) => {
-                        setTemplate({title: e.target.value})}}
+                        value={template.title}
+                        type="text"
+                        onChange={(e) => {
+                        let copy = {...existingTemplate}
+                        copy.title = e.target.value 
+                        setTemplate(copy)}}
                     />
                 </FormGroup>
                 
@@ -231,11 +302,19 @@ export default function CreateTemplate() {
                     {formCategoryCheckboxes}
                 </div>
 
-                <button type="submit"
-                className="template-save-btn"
-                color="success">
-                    Save
-                </button>
+                <div className="edit-btn-container">
+                    <Button type="submit"
+                    className="template-save-btn"
+                    color="success">
+                        Save Changes
+                    </Button>
+                    <Button type="delete"
+                    className="template-delete-btn"
+                    color="danger"
+                    onClick={deleteFunction}>
+                        Delete Template
+                    </Button>
+                </div>
             </Form>
         </>
     )

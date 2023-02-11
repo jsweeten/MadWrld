@@ -5,5 +5,6 @@
         public int Id { get; set; }
         public int CategoryId { get; set; }
         public int TemplateId { get; set; }
+        public Category CategoryName { get; set; }
     }
 }

@@ -8,7 +8,7 @@ using System.Security.Permissions;
 
 namespace MadWrld.Controllers
 {
-    [Authorize]
+    // [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class MadLibController : ControllerBase

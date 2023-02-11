@@ -9,7 +9,7 @@ using System;
 
 namespace MadWrld.Controllers
 {
-    [Authorize]
+    // [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class CategoryController : ControllerBase
@@ -33,10 +33,10 @@ namespace MadWrld.Controllers
         }
         
         // GET: api/<CategoryController>
-        [HttpGet("categorytemplates")]
-        public IActionResult GetCategoryTemplates()
+        [HttpGet("categorytemplates/{id}")]
+        public IActionResult GetCategoryTemplates(int id)
         {
-            return Ok(_categoryRepository.GetCategoryTemplates());
+            return Ok(_categoryRepository.GetCategoryTemplates(id));
         }
 
         // GET api/<CategoryController>/5
@@ -60,15 +60,20 @@ namespace MadWrld.Controllers
                 nameof(GetCategoryTemplates),new { id = categoryTemplate.Id }, categoryTemplate);
         }
 
+
+        // DELETE api/<TemplateController>/5
+        [HttpDelete("categorytemplates")]
+        public IActionResult Delete(CategoryTemplate categoryTemplate)
+        {
+
+            _categoryRepository.RemoveTemplateCategory(categoryTemplate);
+
+            return NoContent();
+        }
+
         // PUT api/<CategoryController>/5
         [HttpPut("{id}")]
         public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE api/<CategoryController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
         {
         }
     }
