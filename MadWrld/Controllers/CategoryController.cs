@@ -9,7 +9,7 @@ using System;
 
 namespace MadWrld.Controllers
 {
-    // [Authorize]
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class CategoryController : ControllerBase
