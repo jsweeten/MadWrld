@@ -18,18 +18,15 @@ namespace MadWrld.Repositories
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = @"
-                        SELECT t.[Id] 'Template', t.[Title], t.UserId,
-                        at.[Id] 'AnswerTemplate', at.TemplateId, at.Position, at.PartOfSpeech, at.Content,
-                        up.[Id] 'User', up.FirstName, up.LastName, up.Email, up.UserTypeId, ut.[Id], ut.[Name]
+                    cmd.CommandText = @"SELECT
+                        t.[Id] 'TemplatePK', t.[Title], t.UserId,
+                        at.[Id] 'AnswerTemplatePK', at.TemplateId, at.Position, at.PartOfSpeech, at.Content,
+                        up.[Id] 'UserPK', up.FirstName, up.LastName, up.Email
                         FROM MLTemplate t
-                        LEFT JOIN UserProfile up
-                        ON t.UserId = up.[Id]
-                        LEFT JOIN UserType ut
-                        ON up.UserTypeId = ut.[Id]
-                        LEFT JOIN MLAnswerTemplate at
-                        ON t.[Id] = at.TemplateId
-                        WHERE t.[Id] = @id";
+                        LEFT JOIN UserProfile up ON t.UserId = up.[Id]
+                        LEFT JOIN MLAnswerTemplate at ON t.[Id] = at.TemplateId
+                        WHERE t.[Id] = @id
+                        ORDER BY at.Position";
 
                     DbUtils.AddParameter(cmd, "@id", id);
 
@@ -43,28 +40,24 @@ namespace MadWrld.Repositories
                             {
                                 template = new MLTemplate()
                                 {
-                                    Id = DbUtils.GetInt(reader, "Template"),
+                                    Id = DbUtils.GetInt(reader, "TemplatePK"),
                                     Title = DbUtils.GetString(reader, "Title"),
                                     UserId = DbUtils.GetInt(reader, "UserId"),
                                     User = new UserProfile()
                                     {
-                                        Id = DbUtils.GetInt(reader, "User"),
+                                        Id = DbUtils.GetInt(reader, "UserPK"),
                                         FirstName = DbUtils.GetString(reader, "FirstName"),
                                         LastName = DbUtils.GetString(reader, "LastName"),
-                                        Email = DbUtils.GetString(reader, "Email"),
-                                        UserType = new UserType()
-                                        {
-                                            Name = DbUtils.GetString(reader, "Name")
-                                        }
+                                        Email = DbUtils.GetString(reader, "Email")
                                     },
-                                    AnswerTemplates = new List<MLAnswerTemplate>()
+                                    AnswerTemplates = new List<MLAnswerTemplate>(),
                                 };
                             }
-                            if (DbUtils.IsNotDbNull(reader, "AnswerTemplate"))
+                            if (DbUtils.IsNotDbNull(reader, "AnswerTemplatePK"))
                             {
                                 template.AnswerTemplates.Add(new MLAnswerTemplate()
                                 {
-                                    Id = DbUtils.GetInt(reader, "AnswerTemplate"),
+                                    Id = DbUtils.GetInt(reader, "AnswerTemplatePK"),
                                     TemplateId = DbUtils.GetInt(reader, "TemplateId"),
                                     Position = DbUtils.GetInt(reader, "Position"),
                                     PartOfSpeech = DbUtils.GetString(reader, "PartofSpeech"),
@@ -77,66 +70,47 @@ namespace MadWrld.Repositories
                 }
             }
         }
-        public List<MLTemplate> GetAll()
+       
+        public List<MLTemplate> GetByUserId(int id)
         {
             using (var conn = Connection)
             {
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = @"
-                        SELECT t.[Id] 'Template', t.[Title], t.UserId,
-                        at.[Id] 'AnswerTemplate', at.TemplateId, at.Position, at.PartOfSpeech, at.Content,
-                        up.[Id] 'User', up.FirstName, up.LastName, up.Email, up.UserTypeId, ut.[Id], ut.[Name]
+                    cmd.CommandText = @"SELECT
+                        t.[Id] 'TemplatePK', t.[Title], t.UserId,
+                        up.[Id] 'UserPK', up.FirstName, up.LastName, up.Email
                         FROM MLTemplate t
-                        LEFT JOIN UserProfile up
-                        ON t.UserId = up.[Id]
-                        LEFT JOIN UserType ut
-                        ON up.UserTypeId = ut.[Id]
-                        LEFT JOIN MLAnswerTemplate at
-                        ON t.[Id] = at.TemplateId";
+                        LEFT JOIN UserProfile up ON t.UserId = up.[Id]
+                        WHERE up.[Id] = @id";
 
-                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    DbUtils.AddParameter(cmd, "@id", id);
+
+                    using (var reader = cmd.ExecuteReader())
                     {
                         var templates = new List<MLTemplate>();
                         while (reader.Read())
                         {
-                            var templateId = DbUtils.GetInt(reader, "Template");
+                            var templateId = DbUtils.GetInt(reader, "TemplatePK");
 
-                            var existingTemplate = templates.FirstOrDefault(p => p.Id == templateId);
+                            var existingTemplate = templates.FirstOrDefault(t => t.Id == templateId);
                             if (existingTemplate == null)
                             {
                                 existingTemplate = new MLTemplate()
                                 {
-                                    Id = DbUtils.GetInt(reader, "Template"),
+                                    Id = DbUtils.GetInt(reader, "TemplatePK"),
                                     Title = DbUtils.GetString(reader, "Title"),
                                     UserId = DbUtils.GetInt(reader, "UserId"),
                                     User = new UserProfile()
                                     {
-                                        Id = DbUtils.GetInt(reader, "User"),
+                                        Id = DbUtils.GetInt(reader, "UserPK"),
                                         FirstName = DbUtils.GetString(reader, "FirstName"),
                                         LastName = DbUtils.GetString(reader, "LastName"),
-                                        Email = DbUtils.GetString(reader, "Email"),
-                                        UserType = new UserType()
-                                        {
-                                            Name = DbUtils.GetString(reader, "Name")
-                                        }
-                                    },
-                                    AnswerTemplates = new List<MLAnswerTemplate>()
+                                        Email = DbUtils.GetString(reader, "Email")
+                                    }
                                 };
                                 templates.Add(existingTemplate);
-                            }
-
-                            if (DbUtils.IsNotDbNull(reader, "AnswerTemplate"))
-                            {
-                                existingTemplate.AnswerTemplates.Add(new MLAnswerTemplate()
-                                {
-                                    Id = DbUtils.GetInt(reader, "AnswerTemplate"),
-                                    TemplateId = DbUtils.GetInt(reader, "TemplateId"),
-                                    Position = DbUtils.GetInt(reader, "Position"),
-                                    PartOfSpeech = DbUtils.GetString(reader, "PartofSpeech"),
-                                    Content = DbUtils.GetString(reader, "Content")
-                                });
                             }
                         }
                         return templates;
@@ -171,17 +145,16 @@ namespace MadWrld.Repositories
                 using (var cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"UPDATE MLTemplate
-                                        SET Title = @title,
-                                            UserId = @userId
-                                        WHERE Id = @id";
-                    DbUtils.AddParameter(cmd, "@title", template.Title);
-                    DbUtils.AddParameter(cmd, "@userId", template.UserId);
+                        SET Title = @title
+                        WHERE Id = @id";
                     DbUtils.AddParameter(cmd, "@id", template.Id);
+                    DbUtils.AddParameter(cmd, "@title", template.Title);
 
                     cmd.ExecuteNonQuery();
                 }
             }
         }
+
 
         public void Remove(int id)
         {

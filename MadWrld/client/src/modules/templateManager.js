@@ -62,3 +62,113 @@ export const addMadLib = (madlibAnswerArray, templateId) => {
       });
   });
 };
+
+export const addTemplate = (template) => {
+  return getToken().then((token) => {
+    return fetch(_apiUrl, {
+    method: "POST",
+    headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+    },
+    body: JSON.stringify(template),
+      }).then((resp) => {
+      if (resp.ok) {
+          return resp.json();
+      } else if (resp.status === 401) {
+          throw new Error("Unauthorized");
+      } else {
+          throw new Error(
+          "An unknown error occurred while trying to save a new madlib.",
+          );
+      }
+      });
+  });
+};
+
+export const addAnswerTemplate = (sentence) => {
+  return getToken().then((token) => {
+    return fetch(`${_apiUrl}/answertemplate`, {
+    method: "POST",
+    headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+    },
+    body: JSON.stringify(sentence),
+      }).then((resp) => {
+      if (resp.ok) {
+          return resp.json();
+      } else if (resp.status === 401) {
+          throw new Error("Unauthorized");
+      } else {
+          throw new Error(
+          "An unknown error occurred while trying to save a new madlib.",
+          );
+      }
+      });
+  });
+};
+
+export const editTemplate = (template) => {
+  return getToken().then((token) => {
+      return fetch(`${_apiUrl}/${template.id}`, {
+        method: "PUT",
+        headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(template),
+      }).then((resp) => {
+        if (!resp.ok) {
+          throw new Error("An unknown error occurred while trying to edit title.")
+        }
+      })
+  })
+}
+
+export const editAnswerTemplate = (answerTemplate) => {
+  return getToken().then((token) => {
+      return fetch(`${_apiUrl}/answertemplate/${answerTemplate.id}`, {
+          method: "PUT",
+          headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json"
+          },
+          body: JSON.stringify(answerTemplate),
+      }).then((resp) => {
+          if (!resp.ok) {
+            throw new Error("An unknown error occurred while trying to edit sentence.")
+          }
+      })
+  })
+}
+
+export const getTemplatesByUserId = () => {
+  return getToken().then((token) => {  
+    return fetch(`${_apiUrl}/user`, {
+        method: 'GET',
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    }).then((res) => {
+        if (res.ok) {
+          return res.json();
+        } else {
+          throw new Error(
+              "An unknown error occurred while trying to get template.",
+          );
+        }
+    });
+  });
+}
+
+export const deleteTemplate = (id) => {
+  return getToken().then(token => {
+      return fetch(`${_apiUrl}/${id}`, {
+          method: "DELETE",
+          headers: {
+              Authorization: `Bearer ${token}`
+          }
+      })
+  })
+}

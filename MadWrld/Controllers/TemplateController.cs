@@ -8,7 +8,7 @@ using System;
 
 namespace MadWrld.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class TemplateController : ControllerBase
@@ -16,20 +16,26 @@ namespace MadWrld.Controllers
         private readonly IMLTemplateRepository _mlTemplateRepository;
         private readonly IUserProfileRepository _userProfileRepository;
         private readonly IMadLibRepository _madlibRepository;
+        private readonly IMLAnswerTemplateRepository _mlAnswerTemplateRepository;
         public TemplateController(
             IMLTemplateRepository mlTemplateRepository,
             IUserProfileRepository userProfileRepository,
-            IMadLibRepository madlibRepository)
+            IMadLibRepository madlibRepository,
+            IMLAnswerTemplateRepository mlAnswerTemplateRepository)
         {
             _mlTemplateRepository = mlTemplateRepository;
             _userProfileRepository = userProfileRepository;
             _madlibRepository = madlibRepository;
+            _mlAnswerTemplateRepository = mlAnswerTemplateRepository;
         }
+        
         // GET: api/<TemplateController>
-        [HttpGet]
-        public IActionResult GetAllTemplates()
+        [HttpGet("user")]
+        public IActionResult GetTemplatesByUser()
         {
-            return Ok(_mlTemplateRepository.GetAll());
+            var currentUser = GetCurrentUserProfile();
+
+            return Ok(_mlTemplateRepository.GetByUserId(currentUser.Id));
         }
 
         // GET api/<TemplateController>/5
@@ -61,14 +67,20 @@ namespace MadWrld.Controllers
         }
         
         // POST api/<TemplateController>
+        [HttpPost("answertemplate")]
+        public IActionResult PostAnswerTemplate(MLAnswerTemplate sentence)
+        {
+            _mlAnswerTemplateRepository.Add(sentence);
+            return CreatedAtAction(
+            nameof(Get), new { id = sentence.Id }, sentence);
+        }
+        
+        // POST api/<TemplateController>
         [HttpPost("madlibform/{templateid}")]
         public IActionResult PostMadLib(List<string> inputs, int templateId)
         {
             var currentUserProfile = GetCurrentUserProfile();
-            if (currentUserProfile.UserType.Name != "Admin")
-            {
-                return Unauthorized();
-            }
+
             var currentTemplate = _mlTemplateRepository.GetById(templateId);
             
             var completedMadLib = new MadLib();
@@ -95,15 +107,33 @@ namespace MadWrld.Controllers
 
         // PUT api/<TemplateController>/5
         [HttpPut("{id}")]
-        public IActionResult Edit(int id,MLTemplate template)
+        public IActionResult EditTemplate(MLTemplate template)
         {
-            if (id != template.Id)
+            try
+            {
+                _mlTemplateRepository.Update(template);
+
+                return NoContent();
+            }
+            catch
             {
                 return BadRequest();
             }
+        }
 
-            _mlTemplateRepository.Update(template);
-            return NoContent();
+        // PUT api/<TemplateController>/answertemplate/5
+        [HttpPut("answertemplate/{id}")]
+        public IActionResult EditAnswerTemplate(MLAnswerTemplate sentence)
+        {
+            try
+            {
+                _mlAnswerTemplateRepository.Update(sentence);
+                return NoContent();
+            }
+            catch
+            {
+                return BadRequest();
+            }
         }
 
         // DELETE api/<TemplateController>/5

@@ -16,7 +16,7 @@ const Header = ({ isLoggedIn }) => {
             <Navbar>
                 <Link to="/">My Feed</Link>
                 <Link to="/userposts">My MadLibs</Link>
-                <Link to="/templates">Templates</Link>
+                <Link to="/category">Create Your Own MadLib!</Link>
                 { isLoggedIn && <Button onClick= {logout}>Logout</Button> }
                 
             </Navbar>

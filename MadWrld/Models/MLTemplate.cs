@@ -10,5 +10,6 @@ namespace MadWrld.Models
         public int UserId { get; set; }
         public UserProfile User { get; set; }
         public List<MLAnswerTemplate> AnswerTemplates { get; set; }
+        public List<Category> Categories { get; set; }
     }
 }
