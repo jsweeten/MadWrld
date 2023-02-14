@@ -1,23 +1,22 @@
 import {Card, CardBody, CardTitle, CardText, CardSubtitle } from 'reactstrap';
-import { Link } from 'react-router-dom';
-import "./Template.css";
+import { useNavigate } from 'react-router-dom';
 
 export default function TemplateCard({template}) {
+    const navigate= useNavigate();
+
     return (
-        <Card>
-            <Link to={`/templates/${template.id}`} >
-                <CardBody>
+        <div className="template-card" onClick={() => navigate(`/templates/${template.id}`)}>
+            <CardBody>
                     <CardTitle tag="h5">
                         {template.title}
                     </CardTitle>
                     <CardSubtitle
-                        className="mb-2 text-muted"
+                        className="mb-2"
                         tag="h6"
                     >
                         Created by user {template.user.firstName}
                     </CardSubtitle>
-                </CardBody>
-            </ Link >
-        </Card>
+            </CardBody>
+        </div>
     )
 }

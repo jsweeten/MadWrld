@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { Form, FormGroup, Input, Label } from "reactstrap"
 import { addAnswerTemplate, addTemplate } from "../../modules/templateManager";
 import { getCategories, addCategoryTemplate } from "../../modules/categoryManager";
-import "./Template.css";
 
 export default function CreateTemplate() {
     const navigate = useNavigate();
@@ -112,8 +111,8 @@ export default function CreateTemplate() {
 
     sentences.forEach((sentence, i) => {
         formInputLines.push(
-        <FormGroup key={`sentence--${i}`}>
-            <Label>Sentence {i + 1}</Label>
+        <FormGroup key={`sentence--${i}`} className="mb-2">
+            <Label className="mt-2">Sentence {i + 1}</Label>
             <Input
             type="text"
             onChange={(e) => {
@@ -122,9 +121,10 @@ export default function CreateTemplate() {
                 let input = setSentenceInputFunction(i)
                 input(copy)}}
             />
-            <Label>Part of Speech:</Label>
+            <Label className="mt-2">Part of Speech:</Label>
             <Input
             type="text"
+            className="part-of-speech-input"
             onChange={(e) => {
                 let copy = {...sentence}
                 copy.partOfSpeech = e.target.value 
@@ -136,8 +136,8 @@ export default function CreateTemplate() {
 
     categories.forEach((c) => {
         formCategoryCheckboxes.push(
-            <FormGroup key={`cat--${c.id}`}>
-                <Label>{c.name}</Label>
+            <div key={`cat--${c.id}`} className="mx-3">
+                <p className="cb-label">{c.name}</p>
                 <Input
                 type="checkbox"
                 value={c.id}
@@ -151,7 +151,7 @@ export default function CreateTemplate() {
                     }
                 }
                 />
-            </FormGroup>
+            </div>
         )
     })
     
@@ -199,18 +199,19 @@ export default function CreateTemplate() {
 
     return (
         <>
-            <header>Create A Template of Your Own!</header>
+            <header className="create-header">Create A Template of Your Own!</header>
             
-            <h4>How this works:</h4>
-            
-            <div>
-                <div>MadLibs on this site are made up of ten sentences</div>
-                <div>Each sentence can only contain ONE blank</div>
-                <div>Enter your sentence in the upper text box and put a "@input" (without quotations) where you want the blank to be</div>
-                <div>In the second box, enter the TYPE of word that you require to complete the sentence</div>
-                <div>Do this for all ten lines</div>
-                <div>At the bottom of the page, choose which category would best fit your new story</div>
-                <div>Hit the submit button and your new template should be added!</div>
+            <div className="input-container">
+                <h1>HOW THIS WORKS:</h1>
+                <ul>
+                    <li>MadLibs on this site are made up of ten sentences</li>
+                    <li>Each sentence can only contain ONE blank</li>
+                    <li>Enter your sentence in the upper text box and put a "@input" (without quotations) where you want the blank to be</li>
+                    <li>In the second box, enter the TYPE of word that you require to complete the sentence</li>
+                    <li>Do this for all ten lines</li>
+                    <li>At the bottom of the page, choose which category would best fit your new story</li>
+                    <li>Hit the submit button and your new template should be added!</li>
+                </ul>
             </div>
             
             <Form onSubmit={submitTemplate}>
@@ -226,9 +227,11 @@ export default function CreateTemplate() {
                 <div className="input-container">
                     {formInputLines}
                 </div>
-
-                <div className="checkbox-container">
+                
+                <div className="input-container">
+                    <div className="checkbox-form">
                     {formCategoryCheckboxes}
+                    </div>
                 </div>
 
                 <button type="submit"

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import MadLibCard from "./MadLibCard";
 import { getMadLibs } from "../../modules/madlibManager";
+import "./MadLib.css";
 
 export default function MadLibList() {
     const [ madlibsList, setMadLibsList ] = useState([]);

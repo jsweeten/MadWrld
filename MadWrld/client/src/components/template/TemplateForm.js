@@ -2,9 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Form, FormGroup, Input, Label } from "reactstrap"
 import { getTemplateById, addMadLib } from "../../modules/templateManager";
-import "./Template.css";
 
-export default function TemplateForm() {
+export default function TemplateForm({userProfile}) {
     const [ currentTemplate, setCurrentTemplate ] = useState({})
     const [ partOfSpeech, setPartOfSpeech ] = useState([])
     const [ input1, setInput1 ] = useState()
@@ -48,7 +47,18 @@ export default function TemplateForm() {
         answerTemplate?.partOfSpeech)
 
     const answerArray = [input1,input2,input3,input4,input5,input6,input7,input8,input9,input10]
-        
+     
+    let madeByUser = null
+    
+    if (currentTemplate?.userId === userProfile?.id)
+        {
+        madeByUser =
+            <button className="input-container bg-danger"
+            onClick={() => navigate(`/templates/edit/${currentTemplate.id}`)}>
+                Edit / Delete
+            </button>
+        }
+    
     const submitTemplate = (e) => {
         e.preventDefault();
         addMadLib(answerArray, currentTemplate.id).then(() => {navigate("/userposts")});
@@ -72,12 +82,14 @@ export default function TemplateForm() {
                     </FormGroup>
                     )}
                 </div>
-
-                <button type="submit"
-                className="template-save-btn"
-                color="success">
-                    Save
-                </button>
+                <div className="edit-btn-container">
+                    <button type="submit"
+                    className="input-container"
+                    color="success">
+                        Save
+                    </button>
+                    {madeByUser}
+                </div>
             </Form>
         </>
     )

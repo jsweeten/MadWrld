@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import MadLibCard from "./MadLibCard";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { getMadLibsByUserId } from "../../modules/madlibManager";
 import { getTemplatesByUserId } from "../../modules/templateManager";
-import { CardSubtitle, CardTitle, Card, Button } from "reactstrap";
+import { Card } from "reactstrap";
+import TemplateCard from "../template/TemplateCard";
+import "./MadLib.css";
 
 export default function UserMadLibs() {
     const navigate = useNavigate();
@@ -19,33 +21,20 @@ export default function UserMadLibs() {
 
     useEffect(() => {
         getAllMadLibs()
-    }, []);
-
-    useEffect(() => {
         getUserTemplates()
     }, []);
 
     const templatesOrNah = () => {
         if (userTemplatesList?.length > 0) {
             return userTemplatesList.map(t => 
-                <div key={`template--${t.id}`}>
-                    <Card >
-                        <Link to={`/templates/${t.id}`}>
-                            <CardTitle>{t.title}</CardTitle>
-                            <CardSubtitle>Created By User {t.user.firstName}</CardSubtitle>
-                        </Link>
-                    </Card>
-                    <Button onClick={() => navigate(`/templates/edit/${t.id}`)}>
-                        Edit Template
-                    </Button>
-                </div>
+                    <TemplateCard template={t} key={`template--${t.id}`}/>
             )
         } else {
             return (
-            <Card>
-                <Link to="/templates/create">
-                <CardTitle>Click To Create Your First MadLib Template!</CardTitle>
-                </Link>
+            <Card 
+            className="card-body"
+            onClick={() => navigate("/templates/create")}>
+                <div>Click To Create Your First MadLib Template!</div>
             </Card>)
         }
     }
@@ -53,25 +42,25 @@ export default function UserMadLibs() {
     const templatesList = templatesOrNah()
 
     return (
-        <>
-            <section>
+        <div className="user-post-main">
+            <section className="madlib-list">
                 <div>
                     <header>Your MadLibs</header>
                 </div>
-                <div className="madlib-card-container">
+                <div className="madlib-card container">
                     {madlibsList?.map(madlib => 
                         < MadLibCard madlib={madlib} key={madlib.id} />
                     )}
                 </div>
             </section>
-            <section>
+            <section className="madlib-list">
                 <div>
                     <header>Your Templates</header>
                 </div>
-                <div className="template-card-container">
+                <div className="template-card container">
                     {templatesList}
                 </div>
             </section>
-        </>
+        </div>
     )
 }

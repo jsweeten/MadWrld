@@ -1,0 +1,13 @@
+.user-post-main {
+    display: flex;
+    justify-content: space-around;
+    padding: 20px;
+}
+
+.madlib-list {
+    width: 50%;
+}
+
+.container {
+    width: 10%;
+}

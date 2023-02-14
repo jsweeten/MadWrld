@@ -1,13 +1,185 @@
+html {
+  margin: 0;
+}
+
 body {
-  margin: 5;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  padding: 30px;
+  font-family: 'Indie Flower', sans-serif;
+  font-size: 30px;
+  color: rgb(48, 48, 48);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: rgba(100, 100, 100, 0.863);
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+a:link {
+  text-decoration: none;
+  color: black;
+}
+
+a:visited {
+  text-decoration: none;
+  color: black;
+}
+
+a:hover {
+  text-decoration: none;
+  color: black;
+}
+
+a:active {
+  text-decoration: none;
+  color: black;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  border: 4px solid black;
+  border-radius: 20px;
+  padding: 2px 8px;
+  list-style-type: none;
+  background-color: rgba(127, 68, 199, 0.829);
+  margin: 1%;
+  box-shadow: 5px 5px 15px rgb(0, 0, 0);
+}
+
+.logo-container {
+  text-align: center;
+}
+
+.logo {
+  width: 40%;
+  height: 70px;
+}
+
+.login {
+  width: 100% !important;
+}
+
+.template-card-container {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.mb-3 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.template-save-btn {
+  background-color: rgba(127, 68, 199, 0.829);
+  border: 2px solid black;
+  border-radius: 15px;
+  box-shadow: 5px 5px 15px rgb(0, 0, 0);
+  width: 30%;
+  margin-top: 10px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 5%;
+}
+
+header {
+  text-align: center;
+  color: rgba(127, 68, 199, 0.829);
+  font-weight: 600;
+  font-size: 48px;
+  text-shadow: 3px 3px 1px rgb(0, 0, 0);
+}
+
+/* Template Card */
+
+.template-card {
+  margin-bottom: 5px;
+}
+
+.category-list {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+.category-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.card-body {
+  background-color: rgba(127, 68, 199, 0.829);
+  border: 5px solid rgb(92, 28, 170);
+  border-radius: 20px;
+  /* text-shadow: 2px 2px 8px rgb(8, 8, 8); */
+  box-shadow: 5px 5px 15px rgb(0, 0, 0);
+  padding: 5px;
+  width: 100%;
+  margin-top: 10px;
+}
+
+/* Template Form */
+
+.form-control {
+  margin: 3px;
+}
+
+input.form-control {
+  width: 40%;
+  display: flex;
+  box-shadow: 5px 5px 10px black;
+}
+
+.checkbox-container {
+  display: flex !important;
+  justify-content: space-evenly !important;
+}
+
+.checkbox-form {
+  display: flex !important;
+
+  align-items: stretch;
+}
+
+.part-of-speech-input {
+  width: 20% !important;
+}
+
+.edit-btn-container {
+  display: flex !important;
+  justify-content: center;
+}
+
+.input-container {
+  background-color: rgba(127, 68, 199, 0.829);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  border: 5px solid black;
+  border-radius: 15px;
+  margin: 5%;
+  padding: 5%;
+  box-shadow: 5px 5px 10px black;
+}
+
+.create-header {
+  margin-top: 15px;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+    font-weight: 900;
+}
+
+li {
+  margin-top: 3px;
 }

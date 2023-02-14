@@ -13,7 +13,7 @@ import TemplateForm from "./template/TemplateForm";
 import CategoryList from "./category/CategoryList";
 import CategoryDetails from "./category/CategoryDetails";
 
-export default function ApplicationViews({ isLoggedIn }) {
+export default function ApplicationViews({ isLoggedIn, userProfile }) {
   return (
     <main>
       <Routes>
@@ -23,7 +23,7 @@ export default function ApplicationViews({ isLoggedIn }) {
             element={ isLoggedIn ? <MadLibList /> : <Navigate to="/login" /> }
           />
           <Route path="madlibs" element={isLoggedIn ? <MadLibList /> : <Navigate to="/login" />} />
-          <Route path="madlibs/:id" element={ isLoggedIn ? <MadLibDetails /> : <Navigate to="/login" /> }/>
+          <Route path="madlibs/:id" element={ isLoggedIn ? <MadLibDetails userProfile={userProfile}/> : <Navigate to="/login" /> }/>
           <Route path="userposts" element={ isLoggedIn ? <UserMadLibs /> : <Navigate to="/login" /> }/>
 
           <Route path="category">
@@ -32,14 +32,14 @@ export default function ApplicationViews({ isLoggedIn }) {
             />
           </Route>
           <Route path="category/:id" element={ isLoggedIn ? < CategoryDetails /> : <Navigate to="/login" /> } />
-          <Route path="templates/:id" element={ isLoggedIn ? < TemplateForm /> : <Navigate to="/login" /> } />
+          <Route path="templates/:id" element={ isLoggedIn ? < TemplateForm userProfile={userProfile}/> : <Navigate to="/login" /> } />
           <Route path="templates/create" element={ isLoggedIn ? < CreateTemplate /> : <Navigate to="/login" /> } />
-          <Route path="templates/edit/:existingTemplateId" element={ isLoggedIn ? < EditTemplate /> : <Navigate to="/login" /> } />
+          <Route path="templates/edit/:existingTemplateId" element={ isLoggedIn ? < EditTemplate userProfile={userProfile}/> : <Navigate to="/login" /> } />
 
           <Route path="users">
             <Route index
               element={ isLoggedIn ? <ListUsers /> : <Navigate to="/login" /> } />
-            <Route path=":id"  element={ isLoggedIn ? < UserDetails /> : <Navigate to="/login" /> } />
+            <Route path=":id"  element={ isLoggedIn ? < UserDetails userProfile={userProfile} /> : <Navigate to="/login" /> } />
           </Route>
 
           <Route path="login" element={<Login />} />

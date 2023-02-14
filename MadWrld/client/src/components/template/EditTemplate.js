@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Form, FormGroup, Input, Label, Button } from "reactstrap"
+import { Form, FormGroup, Input, Label } from "reactstrap"
 import { getTemplateById, editTemplate, editAnswerTemplate, deleteTemplate } from "../../modules/templateManager";
 import { getCategories, getByTemplateId, addCategoryTemplate, deleteCategoryTemplate } from "../../modules/categoryManager";
-import "./Template.css";
 
-export default function EditTemplate() {
+export default function EditTemplate({userProfile}) {
     const navigate = useNavigate();
     const { existingTemplateId } = useParams();
     const [ existingTemplate, setExistingTemplate ] = useState({});
@@ -186,8 +185,8 @@ export default function EditTemplate() {
 
     categories.forEach((c) => {
         formCategoryCheckboxes.push(
-            <FormGroup key={`cat--${c.id}`}>
-                <Label>{c.name}</Label>
+            <div key={`cat--${c.id}`} className="mx-3">
+                <p className="cb-label">{c.name}</p>
                 <Input
                 type="checkbox"
                 checked={newCategoryArray.includes(c.id)}
@@ -202,7 +201,7 @@ export default function EditTemplate() {
                     }
                 }
                 />
-            </FormGroup>
+            </div>
         )
     })
     
@@ -264,21 +263,25 @@ export default function EditTemplate() {
             deleteTemplate(existingTemplateId).then(window.alert('Template has been deleted!')).then(navigate('/userposts'))
         }
     }
-
+    if (existingTemplate?.userId !== userProfile?.id) {
+        return (<p>You are not authorized to make edits to templates that are not your own! Shame on you!</p>)
+    } else {
     return (
         <>
-            <header>Edit Template</header>
+            <header className="create-header">Edit Template</header>
             
-            <h4>How this works:</h4>
             
-            <div>
-                <div>MadLibs on this site are made up of ten sentences</div>
-                <div>Each sentence can only contain ONE blank</div>
-                <div>Enter your sentence in the upper text box and put a "@input" (without quotations) where you want the blank to be</div>
-                <div>In the second box, enter the TYPE of word that you require to complete the sentence</div>
-                <div>Do this for all ten lines</div>
-                <div>At the bottom of the page, choose which category would best fit your new story</div>
-                <div>Hit the submit button and your new template should be added!</div>
+            <div className="input-container">
+                <h1>HOW THIS WORKS:</h1>
+                <ul>
+                    <li>MadLibs on this site are made up of ten sentences</li>
+                    <li>Each sentence can only contain ONE blank</li>
+                    <li>Enter your sentence in the upper text box and put a "@input" (without quotations) where you want the blank to be</li>
+                    <li>In the second box, enter the TYPE of word that you require to complete the sentence</li>
+                    <li>Do this for all ten lines</li>
+                    <li>At the bottom of the page, choose which category would best fit your new story</li>
+                    <li>Hit the submit button and your new template should be added!</li>
+                </ul>
             </div>
             
             <Form onSubmit={submitTemplate}>
@@ -298,24 +301,25 @@ export default function EditTemplate() {
                     {formInputLines}
                 </div>
 
-                <div className="checkbox-container">
+                <div className="input-container">
+                    <div className="checkbox-form">
                     {formCategoryCheckboxes}
+                    </div>
                 </div>
 
                 <div className="edit-btn-container">
-                    <Button type="submit"
-                    className="template-save-btn"
+                    <button type="submit"
+                    className="input-container"
                     color="success">
                         Save Changes
-                    </Button>
-                    <Button type="delete"
-                    className="template-delete-btn"
-                    color="danger"
+                    </button>
+                    <button type="delete"
+                    className="input-container bg-danger"
                     onClick={deleteFunction}>
                         Delete Template
-                    </Button>
+                    </button>
                 </div>
             </Form>
         </>
-    )
+    )}
 }
