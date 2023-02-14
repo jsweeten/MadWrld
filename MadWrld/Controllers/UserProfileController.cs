@@ -37,6 +37,18 @@ namespace MadWrld.Controllers
             return Ok(userProfile);
         }
 
+        [HttpGet("Me")]
+        public IActionResult Me()
+        {
+            var userProfile = GetCurrentUserProfile();
+            if (userProfile == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(userProfile);
+        }
+
         [HttpGet]
         public IActionResult GetAllUsers()
         {
@@ -59,6 +71,7 @@ namespace MadWrld.Controllers
         [HttpPost]
         public IActionResult Post(UserProfile userProfile)
         {
+            userProfile.UserTypeId = 1;
             _userProfileRepository.Add(userProfile);
             return CreatedAtAction(
                 nameof(GetUserProfile),
@@ -71,7 +84,7 @@ namespace MadWrld.Controllers
         {
             var currentUserProfile = GetCurrentUserProfile();
 
-            if (id != userProfile.Id)
+            if (id != currentUserProfile.Id || currentUserProfile.UserTypeId != 1)
             {
                 return BadRequest();
             }

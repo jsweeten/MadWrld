@@ -1,22 +1,23 @@
 import {Card, CardBody, CardTitle, CardText, CardSubtitle } from 'reactstrap';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 export default function MadLibCard({madlib}) {
+    const navigate = useNavigate();
+
     return (
-        <Card>
-            <Link to={`/madlibs/${madlib.id}`} >
-                <CardBody>
+        <div className="madlib-card" onClick={() => navigate(`/madlibs/${madlib.id}`)}>
+            <CardBody>
+
                     <CardTitle tag="h5">
                         {madlib?.template?.title}
                     </CardTitle>
                     <CardSubtitle
-                        className="mb-2 text-muted"
+                        className="mb-2"
                         tag="h6"
                     >
                         Created by user {madlib.userProfile.firstName}
                     </CardSubtitle>
-                </CardBody>
-            </ Link >
-        </Card>
+            </CardBody>
+        </div>
     )
 }

@@ -86,7 +86,7 @@ GO
 ALTER TABLE [CategoryTemplate] ADD FOREIGN KEY ([CategoryId]) REFERENCES [Category] ([Id]) ON DELETE CASCADE
 GO
 
-ALTER TABLE [CategoryTemplate] ADD FOREIGN KEY ([TemplateId]) REFERENCES [MLTemplate] ([Id])
+ALTER TABLE [CategoryTemplate] ADD FOREIGN KEY ([TemplateId]) REFERENCES [MLTemplate] ([Id]) ON DELETE CASCADE
 GO
 
 ALTER TABLE [MLAnswerTemplate] ADD FOREIGN KEY ([TemplateId]) REFERENCES [MLTemplate] ([Id]) ON DELETE CASCADE

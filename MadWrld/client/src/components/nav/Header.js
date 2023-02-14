@@ -1,10 +1,9 @@
-import { Button, Navbar } from "reactstrap";
+import { Navbar } from "reactstrap";
 import { Link } from "react-router-dom";
 import { logout } from "../../modules/authManager";
-import "./Header.css";
 import logo from "./mad-wrld-logo_cropped.png";
 
-const Header = ({ isLoggedIn }) => {
+const Header = ({ isLoggedIn, userProfile }) => {
 
 
 
@@ -17,7 +16,9 @@ const Header = ({ isLoggedIn }) => {
                 <Link to="/">My Feed</Link>
                 <Link to="/userposts">My MadLibs</Link>
                 <Link to="/category">Create Your Own MadLib!</Link>
-                { isLoggedIn && <Button onClick= {logout}>Logout</Button> }
+                { userProfile?.userType?.name === "Admin" && <Link to="/users">Users</Link>
+                 }
+                { isLoggedIn && <div onClick= {logout}>Logout</div> }
                 
             </Navbar>
         </>

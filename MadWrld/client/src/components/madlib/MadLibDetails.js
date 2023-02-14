@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import {Card, CardBody, CardTitle, CardText, CardSubtitle, Button } from 'reactstrap';
+import {Card, CardText, CardSubtitle } from 'reactstrap';
 import { getMadLibById, deleteMadLib } from '../../modules/madlibManager';
 
-export default function MadLibDetails() {
+export default function MadLibDetails({userProfile}) {
     const [ madlib, setMadLib ] = useState();
     const { id } = useParams();
     const navigate = useNavigate();
@@ -22,29 +22,43 @@ export default function MadLibDetails() {
             deleteMadLib(id).then(window.alert('Mad Lib has been deleted!')).then(navigate('/userposts'))
         }
     }
+
+         
+    let madeByUser = null
+    
+    if (madlib?.userProfileId === userProfile?.id)
+        {
+        madeByUser =
+            <button className="input-container bg-danger"
+            onClick={deleteFunction}>
+                Delete MadLib
+            </button>
+        }
+    
     
     return (
         <>
-            <Card>
-                <CardBody>
-                    <CardTitle tag="h5">
+            <Card className="input-container">
+                    <h1>
                         {madlib?.template?.title}
-                    </CardTitle>
+                    </h1>
                     <CardText>
                         {madlib?.story}
                     </CardText>
-                    <CardSubtitle
-                        className="mb-2 text-muted"
+                    <h4
+                        className="mb-2"
                         tag="h6"
                     >
                         Created by user {madlib?.userProfile?.firstName}
-                    </CardSubtitle>
-                </CardBody>
+                    </h4>
             </Card>
-            <div className="ml-delete-btn">
-                <Button onClick={deleteFunction}>
-                Delete
-                </Button>
+            <div className="edit-btn-container">
+                {madeByUser}
+                <button
+                    className="input-container"
+                    onClick={() => navigate(`/templates/${madlib?.templateId}`)}>
+                    Create Another Using This Template
+                </button>
             </div>
         </>
     )

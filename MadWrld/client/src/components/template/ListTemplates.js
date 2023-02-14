@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import TemplateCard from "./TemplateCard";
 import { getTemplates } from "../../modules/templateManager";
-import "./Template.css"
 
 export default function ListTemplates() {
     const [ templatesList, setTemplatesList ] = useState([]);
