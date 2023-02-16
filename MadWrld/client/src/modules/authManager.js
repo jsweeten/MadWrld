@@ -3,6 +3,44 @@ import "firebase/auth";
 
 const _apiUrl = "/api/userprofile";
 
+export const getUsersList = () => {
+  return getToken().then((token) => {
+      return fetch(_apiUrl, {
+        method: 'GET',
+        headers: {
+            Authorization: `Bearer  ${token}`,
+        },
+    }).then((res) => {
+      if (res.ok) {
+        return res.json();
+      } else {
+          throw new Error(
+                "An unexpected error occurred",
+          );
+        }
+    });
+  });
+}
+
+export const getAllUserTypes = () => {
+  return getToken().then((token) => {
+      return fetch(`${_apiUrl}/usertype`, {
+        method: 'GET',
+        headers: {
+            Authorization: `Bearer  ${token}`,
+        },
+    }).then((res) => {
+      if (res.ok) {
+        return res.json();
+      } else {
+          throw new Error(
+                "An unexpected error occurred",
+          );
+        }
+    });
+  });
+}
+
 const _doesUserExist = (firebaseUserId) => {
   return getToken().then((token) =>
     fetch(`${_apiUrl}/DoesUserExist/${firebaseUserId}`, {
@@ -66,14 +104,54 @@ export const register = (userProfile, password) => {
 
 export const me = () => {
   return getToken().then((token) =>
-    fetch(`${_apiUrl}/me`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }).then((resp) => resp.json()),
+  fetch(`${_apiUrl}/me`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  }).then((resp) => resp.json()),
   );
 };
+
+export const getUserById = (id) => {
+  return getToken().then(token => {
+    return fetch(`${_apiUrl}/details/${id}`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }).then(res => res.json())
+  })
+}
+
+export const editUserInfo = (user) => {
+  return getToken().then((token) => {
+      return fetch(`${_apiUrl}/${user.id}`, {
+        method: "PUT",
+        headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(user),
+      }).then((resp) => {
+        if (!resp.ok) {
+          throw new Error("An unknown error occurred while trying to edit user information.")
+        }
+      })
+  })
+}
+
+export const deleteUser = (id) => {
+  return getToken().then(token => {
+      return fetch(`${_apiUrl}/${id}`, {
+          method: "DELETE",
+          headers: {
+              Authorization: `Bearer ${token}`
+          }
+      })
+  })
+}
+
 
 // This function will be overwritten when the react app calls `onLoginStatusChange`
 let _onLoginStatusChangedHandler = () => {

@@ -12,6 +12,7 @@ import EditTemplate from "./template/EditTemplate";
 import TemplateForm from "./template/TemplateForm";
 import CategoryList from "./category/CategoryList";
 import CategoryDetails from "./category/CategoryDetails";
+import EditUser from "./user/EditUser";
 
 export default function ApplicationViews({ isLoggedIn, userProfile }) {
   return (
@@ -36,11 +37,10 @@ export default function ApplicationViews({ isLoggedIn, userProfile }) {
           <Route path="templates/create" element={ isLoggedIn ? < CreateTemplate /> : <Navigate to="/login" /> } />
           <Route path="templates/edit/:existingTemplateId" element={ isLoggedIn ? < EditTemplate userProfile={userProfile}/> : <Navigate to="/login" /> } />
 
-          <Route path="users">
-            <Route index
-              element={ isLoggedIn ? <ListUsers /> : <Navigate to="/login" /> } />
-            <Route path=":id"  element={ isLoggedIn ? < UserDetails userProfile={userProfile} /> : <Navigate to="/login" /> } />
-          </Route>
+          <Route path="users" element={ isLoggedIn &&
+              userProfile?.userType?.name === "Admin" ? <ListUsers userProfile={userProfile} /> : <Navigate to="/login" /> } />
+          <Route path="users/:userId" element={ isLoggedIn ? < UserDetails userProfile={userProfile} /> : <Navigate to="/login" /> } />
+          <Route path="users/edit/:id" element={ isLoggedIn ? < EditUser userProfile={userProfile} /> : <Navigate to="/login" /> } />
 
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />

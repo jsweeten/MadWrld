@@ -22,7 +22,8 @@ export default function Register() {
         lastName,
         email,
       };
-      register(userProfile, password).then(() => navigate("/"));
+      register(userProfile, password).then(() => navigate("/"))
+      .catch(() => window.alert("Something went wrong while attempting to create user."));;
     }
   };
 

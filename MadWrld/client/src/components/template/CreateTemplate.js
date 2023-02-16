@@ -192,9 +192,7 @@ export default function CreateTemplate() {
                 categoryObjectArray.forEach((ct) => {
                     ct.templateId = templateData.id
                     addCategoryTemplate(ct)}
-                )})
-            .then(() => {navigate(`/templates/${template?.id}`)
-            })
+            )}).then(window.alert('Template has been added!')).then(() => {navigate('/userposts')})
     }
 
     return (
