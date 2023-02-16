@@ -14,6 +14,11 @@ const Header = ({ isLoggedIn, userProfile }) => {
                 <Link to="/">My Feed</Link>
                 <Link to="/userposts">My MadLibs</Link>
                 <Link to="/category">Create Your Own MadLib!</Link>
+                
+                {/* Logged in admins see Users link,
+                    Logged in users see Profile link
+                    Unauthenticated users see nothing */}
+                    
                 { isLoggedIn ?
                     userProfile?.userTypeId === 1 ? <Link to="/users">Users</Link> :
                     <Link to={`/users/${userProfile?.id}`}>Profile</Link>  : <></>}

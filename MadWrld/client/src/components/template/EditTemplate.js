@@ -146,6 +146,8 @@ export default function EditTemplate({userProfile}) {
             input(copy)})
         }, [ existingTemplate ])
 
+
+    // calling this array allows iteration over the whole story one sentence at a time    
     const sentences = [
         sentence1, sentence2,
         sentence3, sentence4,
@@ -154,9 +156,14 @@ export default function EditTemplate({userProfile}) {
         sentence9, sentence10
     ]
     
+    // array to store each pair of sentence forms in jsx format
     const formInputLines = []
+    
+    // array to store category checkboxes in jsx format
     const formCategoryCheckboxes = []
 
+    // this converts each sentence object into a pair of jsx text
+    // input boxes and stores them in formInputLines
     sentences.forEach((sentence, i) => {
         formInputLines.push(
         <FormGroup key={`sentence--${i}`}>
@@ -183,6 +190,8 @@ export default function EditTemplate({userProfile}) {
         </FormGroup>)
     })
 
+    // this converts each category into a jsx checkbox
+    // and stores them in formCategoryCheckboxes
     categories.forEach((c) => {
         formCategoryCheckboxes.push(
             <div key={`cat--${c.id}`} className="mx-3">
@@ -193,9 +202,14 @@ export default function EditTemplate({userProfile}) {
                 defaultValue={c.id}
                 onChange={
                     (evt) => {
+                        
+                        // checks category checkbox if category is not already checked
+
                         if (!newCategoryArray.includes(parseInt(evt.target.value))) {
                             setNewCategoryArray(previousState => [...previousState, parseInt(evt.target.value)])
                         } else {
+                        
+                        // unchecks checkbox
                             categoryDelete(evt)
                         }
                     }
@@ -205,6 +219,9 @@ export default function EditTemplate({userProfile}) {
         )
     })
     
+    // this function allows you to set each sentence by
+    // using i to relate to the proper sentence you want to set
+    // used in the jsx formInputLines to set each input
     const setSentenceInputFunction = (i) => {
         const sentenceArray = [
             setSentence1, setSentence2,
@@ -216,6 +233,7 @@ export default function EditTemplate({userProfile}) {
         return sentenceArray[i]
     }
 
+    // removes category checkbox selections
     const categoryDelete = (evt) => {
         const copy = [...newCategoryArray]
         const index = copy.indexOf(parseInt(evt.target.value))
@@ -225,7 +243,12 @@ export default function EditTemplate({userProfile}) {
         }
     }
 
-    
+    /*
+        a sorting function to help with managing category selection on submit
+        if category has been removed from template, send delete request
+        to categoryTemplates table. if category has been added to
+        template then send a post request to categoryTemplates
+    */
     const categoryHelper = (template) => {
         oldCategoryArray.map(c => {
             if (!newCategoryArray.includes(c)) {
@@ -267,6 +290,7 @@ export default function EditTemplate({userProfile}) {
         }
     }
     
+    // quick authorization check
     if (existingTemplate?.userId !== userProfile?.id) {
         return (<p>You are not authorized to make edits to templates that are not your own! Shame on you!</p>)
     } else {

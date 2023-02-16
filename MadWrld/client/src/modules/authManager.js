@@ -3,6 +3,7 @@ import "firebase/auth";
 
 const _apiUrl = "/api/userprofile";
 
+// Get All
 export const getUsersList = () => {
   return getToken().then((token) => {
       return fetch(_apiUrl, {
@@ -22,6 +23,7 @@ export const getUsersList = () => {
   });
 }
 
+// Gets the two usertypes, 1 for admin and 2 for 'author' (regular user)
 export const getAllUserTypes = () => {
   return getToken().then((token) => {
       return fetch(`${_apiUrl}/usertype`, {
@@ -41,6 +43,7 @@ export const getAllUserTypes = () => {
   });
 }
 
+// checks to see if user exists in Firebase 
 const _doesUserExist = (firebaseUserId) => {
   return getToken().then((token) =>
     fetch(`${_apiUrl}/DoesUserExist/${firebaseUserId}`, {
@@ -63,6 +66,8 @@ const _saveUser = (userProfile) => {
     }).then(resp => resp.json()));
 };
 
+
+//  creates the token that gets passed to the server when sending requests
 export const getToken = () => {
   const currentUser = firebase.auth().currentUser;
   if (!currentUser) {
@@ -102,6 +107,9 @@ export const register = (userProfile, password) => {
     }).then(() => _onLoginStatusChangedHandler(true)));
 };
 
+
+// gets the current user's info from server.
+// this gets called in App.js and passed as a prop through the components as 'userProfile'
 export const me = () => {
   return getToken().then((token) =>
   fetch(`${_apiUrl}/me`, {
@@ -113,6 +121,7 @@ export const me = () => {
   );
 };
 
+// GET single user info from server
 export const getUserById = (id) => {
   return getToken().then(token => {
     return fetch(`${_apiUrl}/details/${id}`, {
@@ -124,6 +133,7 @@ export const getUserById = (id) => {
   })
 }
 
+// PUT UserProfile
 export const editUserInfo = (user) => {
   return getToken().then((token) => {
       return fetch(`${_apiUrl}/${user.id}`, {
@@ -148,10 +158,21 @@ export const deleteUser = (id) => {
           headers: {
               Authorization: `Bearer ${token}`
           }
+        })
       })
+    }
+    
+// GET by firebase
+export const getUserDetails = (firebaseUUID) => {
+  return getToken().then(token => {
+    return fetch(`${_apiUrl}/${firebaseUUID}`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }).then(res => res.json())
   })
 }
-
 
 // This function will be overwritten when the react app calls `onLoginStatusChange`
 let _onLoginStatusChangedHandler = () => {
@@ -190,14 +211,3 @@ export const onLoginStatusChange = (onLoginStatusChangedHandler) => {
   // Save the callback so we can call it in the `login` and `register` functions.
   _onLoginStatusChangedHandler = onLoginStatusChangedHandler;
 };
-
-export const getUserDetails = (firebaseUUID) => {
-  return getToken().then(token => {
-    return fetch(`${_apiUrl}/${firebaseUUID}`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    }).then(res => res.json())
-  })
-}
