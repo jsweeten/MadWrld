@@ -162,7 +162,7 @@ export default function EditTemplate({userProfile}) {
         <FormGroup key={`sentence--${i}`}>
             <Label>Sentence {i + 1}</Label>
             <Input
-            value={sentence.content}
+            defaultValue={sentence.content}
             type="text"
             onChange={(e) => {
                 let copy = {...sentence}
@@ -172,7 +172,7 @@ export default function EditTemplate({userProfile}) {
             />
             <Label>Part of Speech:</Label>
             <Input
-            value={sentence.partOfSpeech}
+            defaultValue={sentence.partOfSpeech}
             type="text"
             onChange={(e) => {
                 let copy = {...sentence}
@@ -190,7 +190,7 @@ export default function EditTemplate({userProfile}) {
                 <Input
                 type="checkbox"
                 checked={newCategoryArray.includes(c.id)}
-                value={c.id}
+                defaultValue={c.id}
                 onChange={
                     (evt) => {
                         if (!newCategoryArray.includes(parseInt(evt.target.value))) {
@@ -250,19 +250,23 @@ export default function EditTemplate({userProfile}) {
     const submitTemplate = (e) => {
         e.preventDefault();
         editTemplate(template)
-            .then(sentences.forEach((s) => {
-                editAnswerTemplate(s)}))
+        .then(sentences.forEach((s) => {
+            editAnswerTemplate(s)}))
             .then(categoryHelper(template))
             .then(() => {navigate(`/templates/${template?.id}`)
         })
     }
 
-    const deleteFunction = () => {
+    const deleteFunction = (e) => {
+        e.preventDefault();
         const confirmation = window.confirm('Are you sure you want to delete this template?')
         if (confirmation) {
-            deleteTemplate(existingTemplateId).then(window.alert('Template has been deleted!')).then(navigate('/userposts'))
+            deleteTemplate(existingTemplateId)
+            .then(window.alert('Template has been deleted!'))
+            .then(() => {navigate('/userposts')})
         }
     }
+    
     if (existingTemplate?.userId !== userProfile?.id) {
         return (<p>You are not authorized to make edits to templates that are not your own! Shame on you!</p>)
     } else {

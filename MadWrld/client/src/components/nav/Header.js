@@ -5,8 +5,6 @@ import logo from "./mad-wrld-logo_cropped.png";
 
 const Header = ({ isLoggedIn, userProfile }) => {
 
-
-
     return (
         <>
             <div className="logo-container">
@@ -16,8 +14,8 @@ const Header = ({ isLoggedIn, userProfile }) => {
                 <Link to="/">My Feed</Link>
                 <Link to="/userposts">My MadLibs</Link>
                 <Link to="/category">Create Your Own MadLib!</Link>
-                { userProfile?.userType?.name === "Admin" && <Link to="/users">Users</Link>
-                 }
+                { userProfile?.userType?.name === "Admin" && <Link to="/users">Users</Link> }
+                { userProfile?.userType?.name !== "Admin" && <Link to={`/users/${userProfile?.id}`}>Profile</Link> }
                 { isLoggedIn && <div onClick= {logout}>Logout</div> }
                 
             </Navbar>

@@ -26,7 +26,7 @@ export default function UserMadLibs() {
 
     const templatesOrNah = () => {
         if (userTemplatesList?.length > 0) {
-            return userTemplatesList.map(t => 
+            return userTemplatesList?.map(t => 
                     <TemplateCard template={t} key={`template--${t.id}`}/>
             )
         } else {
