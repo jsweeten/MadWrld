@@ -13,7 +13,7 @@ export default function Login() {
     e.preventDefault();
     login(email, password)
       .then(() => navigate("/"))
-      .catch(() => console.log("Invalid email or password"));
+      .catch(() => window.alert("Invalid email or password"));
   };
 
   return (
@@ -23,6 +23,7 @@ export default function Login() {
         <FormGroup>
           <Label for="email">Email</Label>
           <Input
+            required
             className="login"
             id="email"
             type="text"
@@ -33,6 +34,7 @@ export default function Login() {
         <FormGroup>
           <Label for="password">Password</Label>
           <Input
+            required
             className="login"
             id="password"
             type="password"

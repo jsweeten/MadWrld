@@ -38,7 +38,7 @@ export default function ApplicationViews({ isLoggedIn, userProfile }) {
           <Route path="templates/edit/:existingTemplateId" element={ isLoggedIn ? < EditTemplate userProfile={userProfile}/> : <Navigate to="/login" /> } />
 
           <Route path="users" element={ isLoggedIn &&
-              userProfile?.userType.name === "Admin" ? <ListUsers userProfile={userProfile} /> : <Navigate to="/login" /> } />
+              userProfile?.userType?.name === "Admin" ? <ListUsers userProfile={userProfile} /> : <Navigate to="/login" /> } />
           <Route path="users/:userId" element={ isLoggedIn ? < UserDetails userProfile={userProfile} /> : <Navigate to="/login" /> } />
           <Route path="users/edit/:id" element={ isLoggedIn ? < EditUser userProfile={userProfile} /> : <Navigate to="/login" /> } />
 

@@ -91,7 +91,7 @@ export default function EditUser({userProfile}) {
                 {!isAdmin ? <p className="card-body">User Type: {oldUser?.userType?.name}</p> :
                 <>
                     <Input
-                    defaultValue={oldUser.userTypeId}
+                    defaultValue={oldUser?.userTypeId}
                     type="select"
                     onChange={(e) => {
                         let copy = {...newUser}
