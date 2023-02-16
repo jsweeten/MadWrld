@@ -23,6 +23,12 @@ namespace MadWrld.Controllers
         {
             return Ok(_userProfileRepository.GetByFirebaseUserId(firebaseUserId));
         }
+        
+        [HttpGet("usertype")]
+        public IActionResult GetUserTypes()
+        {
+            return Ok(_userProfileRepository.GetUserTypes());
+        }
 
         [HttpGet("DoesUserExist/{firebaseUserId}")]
         public IActionResult DoesUserExist(string firebaseUserId)
@@ -40,38 +46,55 @@ namespace MadWrld.Controllers
         [HttpGet("Me")]
         public IActionResult Me()
         {
-            var userProfile = GetCurrentUserProfile();
-            if (userProfile == null)
+            var currentUserProfile = GetCurrentUserProfile();
+            if (currentUserProfile == null)
             {
                 return NotFound();
             }
 
-            return Ok(userProfile);
+            return Ok(currentUserProfile);
         }
 
         [HttpGet]
         public IActionResult GetAllUsers()
         {
-            return Ok(_userProfileRepository.GetUsers());
+            var currentUserProfile = GetCurrentUserProfile();
+
+            if (currentUserProfile.UserType.Name == "Admin")
+            {
+                return Ok(_userProfileRepository.GetUsers());
+            }
+            else
+            {
+                return Unauthorized();
+            }
         }
 
         [HttpGet("details/{id}")]
         public IActionResult GetUserById(int id)
         {
             var currentUserProfile = GetCurrentUserProfile();
-
             var userProfile = _userProfileRepository.GetById(id);
+            
             if (userProfile == null)
             {
                 return NotFound();
             }
-            return Ok(userProfile);
+
+            if (currentUserProfile.UserType.Name == "Admin" || currentUserProfile.Id == userProfile.Id)
+            {
+                return Ok(userProfile);
+            }
+            else
+            {
+                return Unauthorized();
+            }
         }
 
         [HttpPost]
         public IActionResult Post(UserProfile userProfile)
         {
-            userProfile.UserTypeId = 1;
+            userProfile.UserTypeId = 2;
             _userProfileRepository.Add(userProfile);
             return CreatedAtAction(
                 nameof(GetUserProfile),
@@ -80,16 +103,26 @@ namespace MadWrld.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult Edit(int id, UserProfile userProfile)
+        public IActionResult Edit(UserProfile userProfile)
         {
             var currentUserProfile = GetCurrentUserProfile();
 
-            if (id != currentUserProfile.Id || currentUserProfile.UserTypeId != 1)
+            if (userProfile.Id == currentUserProfile.Id || currentUserProfile.UserTypeId == 1)
             {
-                return BadRequest();
+                _userProfileRepository.Update(userProfile);
+            
+                return NoContent();
             }
 
-            _userProfileRepository.Update(userProfile);
+            return BadRequest();
+        }
+
+        // DELETE api/<UserProfileController>/5
+        [HttpDelete("{id}")]
+        public IActionResult Delete(int id)
+        {
+            _userProfileRepository.Remove(id);
+
             return NoContent();
         }
 

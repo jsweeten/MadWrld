@@ -10,5 +10,7 @@ namespace MadWrld.Repositories
         List<UserProfile> GetUsers();
         UserProfile GetById(int id);
         void Update(UserProfile userProfile);
+        List<UserType> GetUserTypes();
+        void Remove(int id);
     }
 }

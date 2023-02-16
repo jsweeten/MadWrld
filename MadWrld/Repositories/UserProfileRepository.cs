@@ -36,6 +36,7 @@ namespace MadWrld.Repositories
                             FirstName = DbUtils.GetString(reader, "FirstName"),
                             LastName = DbUtils.GetString(reader, "LastName"),
                             Email = DbUtils.GetString(reader, "Email"),
+                            UserTypeId = DbUtils.GetInt(reader, "UserTypeId"),
                             UserType = new UserType()
                             {
                                 Name = DbUtils.GetString(reader, "Name")
@@ -76,6 +77,7 @@ namespace MadWrld.Repositories
                             FirstName = DbUtils.GetString(reader, "FirstName"),
                             LastName = DbUtils.GetString(reader, "LastName"),
                             Email = DbUtils.GetString(reader, "Email"),
+                            UserTypeId = DbUtils.GetInt(reader, "UserTypeId"),
                             UserType = new UserType()
                             {
                                 Name = DbUtils.GetString(reader, "Name")
@@ -120,6 +122,34 @@ namespace MadWrld.Repositories
                             });
                         }
                         return users;
+                    }
+                }
+            }
+        }
+        
+        public List<UserType> GetUserTypes()
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                        SELECT Id, Name
+                        FROM UserType";
+
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        var ut = new List<UserType>();
+                        while (reader.Read())
+                        {
+                            ut.Add(new UserType()
+                            {
+                                Id = DbUtils.GetInt(reader, "Id"),
+                                Name = DbUtils.GetString(reader, "Name")
+                            });
+                        }
+                        return ut;
                     }
                 }
             }
@@ -170,5 +200,20 @@ namespace MadWrld.Repositories
             }
         }
 
+        public void Remove(int id)
+        {
+            using (var conn = Connection)
+            {
+                conn.Open();
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"DELETE FROM UserProfile
+                                        WHERE Id = @id";
+                    DbUtils.AddParameter(cmd, "@id", id);
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
     }
 }

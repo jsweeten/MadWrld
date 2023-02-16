@@ -1,4 +1,4 @@
-﻿using Microsoft.SqlServer.Server;
+﻿
 
 namespace MadWrld.Models
 {
