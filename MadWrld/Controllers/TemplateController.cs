@@ -55,7 +55,7 @@ namespace MadWrld.Controllers
         public IActionResult PostTemplate(MLTemplate template)
         {
             var currentUserProfile = GetCurrentUserProfile();
-            if (currentUserProfile.UserType.Name != "Admin")
+            if (currentUserProfile.UserType.Name != "Admin" || currentUserProfile.Id != template.UserId)
             {
                 return Unauthorized();
             }
