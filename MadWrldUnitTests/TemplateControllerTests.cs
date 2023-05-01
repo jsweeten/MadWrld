@@ -66,9 +66,8 @@ namespace MadWrld.Tests
 
             // Assert
             var okResult = Assert.IsType<NoContentResult>(result);
-            var actualTemplate = Assert.IsType<MLTemplate>(okResult);
 
-            Assert.Equal(testTemplateId, actualTemplate.Id);
+            Assert.IsType<NoContentResult>(okResult);
         }
 
         private List<MLTemplate> CreateTestTemplates(int count)
