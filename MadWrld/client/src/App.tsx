@@ -6,7 +6,7 @@ import ApplicationViews from "./components/ApplicationViews";
 import { BrowserRouter } from "react-router-dom";
 import { onLoginStatusChange, me } from "./modules/authManager";
 
-function App() {
+const App: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(null);
   const [userProfile, setUserProfile] = useState(null);
 

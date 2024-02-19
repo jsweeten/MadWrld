@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { getCategoryById } from '../../modules/categoryManager';
 import TemplateCard from '../template/TemplateCard';
 
