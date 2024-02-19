@@ -1,19 +1,17 @@
 import React from 'react';
 import ReactDOM from "react-dom/client";
 import App from "./App";
-import reportWebVitals from "./reportWebVitals";
 import firebase from "firebase/app";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./index.css";
 
 const firebaseConfig = {
-  apiKey: process.env.REACT_APP_API_KEY,
+  apiKey: "AIzaSyDxX8qL_eqtu8-_ZVwtFA0wUEpxwvvUkQI"
 };
 firebase.initializeApp(firebaseConfig);
 
-const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <React.StrictMode>
     <App />
+  </React.StrictMode>
 );
-
-reportWebVitals();
