@@ -1,4 +1,4 @@
-import { getToken } from "./authManager";
+import { getToken } from "./auth/authManager";
 
 const _apiUrl = "/api/category";
 

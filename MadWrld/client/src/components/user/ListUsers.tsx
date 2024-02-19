@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { getUsersList } from "../../modules/authManager";
+import { getUsersList } from "../../modules/auth/authManager";
 import UserCard from "./UserCard";
 
 export default function ListUsers({userProfile}) {

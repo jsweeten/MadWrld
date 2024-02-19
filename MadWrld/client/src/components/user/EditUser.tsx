@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getUserById, deleteUser, editUserInfo, getAllUserTypes } from "../../modules/authManager";
+import { getUserById, deleteUser, editUserInfo, getAllUserTypes } from "../../modules/auth/authManager";
 import { Form, FormGroup, Input, Label } from "reactstrap"
 
 export default function EditUser({userProfile}) {

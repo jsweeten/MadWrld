@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getUserById } from "../../modules/authManager";
+import { getUserById } from "../../modules/auth/authManager";
 
 export default function UserDetails({userProfile}) {
     const navigate = useNavigate();
