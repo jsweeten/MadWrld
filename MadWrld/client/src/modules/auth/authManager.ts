@@ -1,11 +1,16 @@
-import firebase from "firebase/app";
-import "firebase/auth";
+import auth from './firebase';
+import { signInWithEmailAndPassword,
+    createUserWithEmailAndPassword,
+    onAuthStateChanged,
+    signOut, 
+    UserCredential} from 'firebase/auth';
+import IUser, { INewUser, IUserWithUUID } from '../../interfaces/IUser';
 
 const _apiUrl = "/api/userprofile";
 
 // Get All
 export const getUsersList = () => {
-  return getToken().then((token) => {
+  return getToken().then((token: string) => {
       return fetch(_apiUrl, {
         method: 'GET',
         headers: {
@@ -25,7 +30,7 @@ export const getUsersList = () => {
 
 // Gets the two usertypes, 1 for admin and 2 for 'author' (regular user)
 export const getAllUserTypes = () => {
-  return getToken().then((token) => {
+  return getToken().then((token: string) => {
       return fetch(`${_apiUrl}/usertype`, {
         method: 'GET',
         headers: {
@@ -44,8 +49,8 @@ export const getAllUserTypes = () => {
 }
 
 // checks to see if user exists in Firebase 
-const _doesUserExist = (firebaseUserId) => {
-  return getToken().then((token) =>
+const _doesUserExist = (firebaseUserId: string) => {
+  return getToken().then((token: string) =>
     fetch(`${_apiUrl}/DoesUserExist/${firebaseUserId}`, {
       method: "GET",
       headers: {
@@ -54,8 +59,8 @@ const _doesUserExist = (firebaseUserId) => {
     }).then(resp => resp.ok));
 };
 
-const _saveUser = (userProfile) => {
-  return getToken().then((token) =>
+const _saveUser = async (userProfile: IUserWithUUID): Promise<void> => {
+  return getToken().then((token: string) =>
     fetch(_apiUrl, {
       method: "POST",
       headers: {
@@ -69,15 +74,15 @@ const _saveUser = (userProfile) => {
 
 //  creates the token that gets passed to the server when sending requests
 export const getToken = () => {
-  const currentUser = firebase.auth().currentUser;
+  const currentUser = auth.currentUser;
   if (!currentUser) {
     throw new Error("Cannot get current user. Did you forget to login?");
   }
   return currentUser.getIdToken();
 };
 
-export const login = (email, pw) => {
-  return firebase.auth().signInWithEmailAndPassword(email, pw)
+export const login = (email: string, pw: string) => {
+  return signInWithEmailAndPassword(auth, email, pw)
     .then((signInResponse) => _doesUserExist(signInResponse.user.uid))
     .then((doesUserExist) => {
       if (!doesUserExist) {
@@ -96,15 +101,21 @@ export const login = (email, pw) => {
 };
 
 export const logout = () => {
-  firebase.auth().signOut()
+  signOut(auth);
 };
 
-export const register = (userProfile, password) => {
-  return firebase.auth().createUserWithEmailAndPassword(userProfile.email, password)
-    .then((createResponse) => _saveUser({
-      ...userProfile,
-      firebaseUserId: createResponse.user.uid
-    }).then(() => _onLoginStatusChangedHandler(true)));
+export const register = async (userProfile: INewUser, password: string): Promise<IUserWithUUID> => {
+  try {
+    const userCredential: UserCredential = await createUserWithEmailAndPassword(auth, userProfile.email, password);
+    const firebaseUUID: string = userCredential.user.uid;
+    const completeUserData: IUserWithUUID = { ...userProfile, firebaseUUID };
+    await _saveUser(completeUserData);
+    _onLoginStatusChangedHandler(true);
+    return completeUserData;
+  } catch (error) {
+    console.error("Error with user registration:", error);
+    throw error;
+  }
 };
 
 
@@ -122,7 +133,7 @@ export const me = () => {
 };
 
 // GET single user info from server
-export const getUserById = (id) => {
+export const getUserById = (id: number) => {
   return getToken().then(token => {
     return fetch(`${_apiUrl}/details/${id}`, {
       method: "GET",
@@ -134,7 +145,7 @@ export const getUserById = (id) => {
 }
 
 // PUT UserProfile
-export const editUserInfo = (user) => {
+export const editUserInfo = (user: IUser) => {
   return getToken().then((token) => {
       return fetch(`${_apiUrl}/${user.id}`, {
         method: "PUT",
@@ -151,7 +162,7 @@ export const editUserInfo = (user) => {
   })
 }
 
-export const deleteUser = (id) => {
+export const deleteUser = (id: number) => {
   return getToken().then(token => {
       return fetch(`${_apiUrl}/${id}`, {
           method: "DELETE",
@@ -163,7 +174,7 @@ export const deleteUser = (id) => {
     }
     
 // GET by firebase
-export const getUserDetails = (firebaseUUID) => {
+export const getUserDetails = (firebaseUUID: string) => {
   return getToken().then(token => {
     return fetch(`${_apiUrl}/${firebaseUUID}`, {
       method: "GET",
@@ -175,15 +186,14 @@ export const getUserDetails = (firebaseUUID) => {
 }
 
 // This function will be overwritten when the react app calls `onLoginStatusChange`
-let _onLoginStatusChangedHandler = () => {
+let _onLoginStatusChangedHandler: (isLoggedIn: boolean) => void = () => {
   throw new Error("There's no login status change handler. Did you forget to call 'onLoginStatusChange()'?")
 };
 
 // This function acts as a link between this module.
 // It sets up the mechanism for notifying the react app when the user logs in or out.
-// You might argue that this is all wrong and you might be right, but I promise there are reasons,
-//   and at least this mess is relatively contained in one place.
-export const onLoginStatusChange = (onLoginStatusChangedHandler) => {
+
+export const onLoginStatusChange = (onLoginStatusChangedHandler: (isLoggedIn: boolean) => void) => {
 
   // Here we take advantage of the firebase 'onAuthStateChanged' observer in a couple of different ways.
   // 
@@ -197,11 +207,11 @@ export const onLoginStatusChange = (onLoginStatusChangedHandler) => {
   //   functions located elsewhere in this module. We must handle login separately because we have to do a check
   //   against the app's web API in addition to authenticating with firebase to verify a user can login.
   const unsubscribeFromInitialLoginCheck =
-    firebase.auth().onAuthStateChanged(function initialLoadLoginCheck(user) {
+    onAuthStateChanged(auth, function initialLoadLoginCheck(user) {
       unsubscribeFromInitialLoginCheck();
       onLoginStatusChangedHandler(!!user);
 
-      firebase.auth().onAuthStateChanged(function logoutCheck(user) {
+      onAuthStateChanged(auth, function logoutCheck(user) {
         if (!user) {
           onLoginStatusChangedHandler(false);
         }

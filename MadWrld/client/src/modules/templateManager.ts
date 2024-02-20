@@ -1,4 +1,6 @@
-import { getToken } from "./authManager";
+import { ITemplate, ITemplateTitle } from "../interfaces/ITemplate";
+import IAnswerTemplate from "../interfaces/IAnswerTemplate";
+import { getToken } from "./auth/authManager";
 
 const _apiUrl = "/api/template";
 
@@ -21,7 +23,7 @@ export const getTemplates = () => {
   });
 }
 
-export const getTemplateById = (id) => {
+export const getTemplateById = (id: number) => {
   return getToken().then((token) => {  
     return fetch(`${_apiUrl}/${id}`, {
         method: 'GET',
@@ -40,7 +42,7 @@ export const getTemplateById = (id) => {
   });
 }
 
-export const addMadLib = (madlibAnswerArray, templateId) => {
+export const addMadLib = (madlibAnswerArray: string[], templateId: number) => {
   return getToken().then((token) => {
     return fetch(`${_apiUrl}/madlibform/${templateId}`, {
     method: "POST",
@@ -63,7 +65,7 @@ export const addMadLib = (madlibAnswerArray, templateId) => {
   });
 };
 
-export const addTemplate = (template) => {
+export const addTemplate = (template: ITemplateTitle) => {
   return getToken().then((token) => {
     return fetch(_apiUrl, {
     method: "POST",
@@ -86,7 +88,7 @@ export const addTemplate = (template) => {
   });
 };
 
-export const addAnswerTemplate = (sentence) => {
+export const addAnswerTemplate = (sentence: IAnswerTemplate) => {
   return getToken().then((token) => {
     return fetch(`${_apiUrl}/answertemplate`, {
     method: "POST",
@@ -109,7 +111,7 @@ export const addAnswerTemplate = (sentence) => {
   });
 };
 
-export const editTemplate = (template) => {
+export const editTemplate = (template: ITemplate) => {
   return getToken().then((token) => {
       return fetch(`${_apiUrl}/${template.id}`, {
         method: "PUT",
@@ -126,7 +128,7 @@ export const editTemplate = (template) => {
   })
 }
 
-export const editAnswerTemplate = (answerTemplate) => {
+export const editAnswerTemplate = (answerTemplate: IAnswerTemplate) => {
   return getToken().then((token) => {
       return fetch(`${_apiUrl}/answertemplate/${answerTemplate.id}`, {
           method: "PUT",
@@ -162,7 +164,7 @@ export const getTemplatesByUserId = () => {
   });
 }
 
-export const deleteTemplate = (id) => {
+export const deleteTemplate = (id: number) => {
   return getToken().then(token => {
       return fetch(`${_apiUrl}/${id}`, {
           method: "DELETE",

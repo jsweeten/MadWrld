@@ -1,4 +1,4 @@
-import { getToken } from "./authManager"
+import { getToken } from "./auth/authManager"
 
 const _apiUrl = "/api/madlib";
 
@@ -21,7 +21,7 @@ export const getMadLibs = () => {
   });
 }
 
-export const getMadLibById = (id) => {
+export const getMadLibById = (id: number) => {
   return getToken().then((token) => {  
     return fetch(`${_apiUrl}/${id}`, {
         method: 'GET',
@@ -59,7 +59,7 @@ export const getMadLibsByUserId = () => {
   });
 }
 
-export const deleteMadLib = (id) => {
+export const deleteMadLib = (id: number) => {
   return getToken().then(token => {
       return fetch(`${_apiUrl}/${id}`, {
           method: "DELETE",

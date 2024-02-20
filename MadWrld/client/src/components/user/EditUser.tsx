@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getUserById, deleteUser, editUserInfo, getAllUserTypes } from "../../modules/authManager";
+import { getUserById, deleteUser, editUserInfo, getAllUserTypes } from "../../modules/auth/authManager";
 import { Form, FormGroup, Input, Label } from "reactstrap"
+import IUser from "../../interfaces/IUser";
 
-export default function EditUser({userProfile}) {
+const EditUser: React.FC<{ userProfile: IUser }> = ({userProfile}) => {
     const navigate = useNavigate();
     const { id } = useParams();
-    const [ oldUser, setOldUser ] = useState({});
-    const [ newUser, setNewUser ] = useState({});
+    const [ oldUser, setOldUser ] = useState<IUser>();
+    const [ newUser, setNewUser ] = useState<IUser>();
     const [ userTypes, setUserTypes ] = useState([]);
-    const [ isAdmin, setIsAdmin ] = useState(false);
+    const [ isAdmin, setIsAdmin ] = useState<boolean>(false);
 
     const getUser = () => {
         (getUserById(id)).then(userData => setOldUser(userData))
@@ -116,3 +117,5 @@ export default function EditUser({userProfile}) {
     </>
     )
 }
+
+export default EditUser;

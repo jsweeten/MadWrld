@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { getCategories } from "../../modules/categoryManager";
 import { Link } from "react-router-dom";
 import CategoryCard from './CategoryCard';
+import ICategory from '../../interfaces/ICategory';
 
-export default function CategoryList() {
-    const [ categoryList, setCategoryList ] = useState([]);
+const CategoryList: React.FC = () => {
+    const [ categoryList, setCategoryList ] = useState<ICategory[] | undefined>();
 
     const getAllCategories = () => {
         getCategories().then(data => setCategoryList(data));
@@ -20,7 +21,8 @@ export default function CategoryList() {
                 <header>Choose A Template From The Categories Below...</header>
             </div>
             <div className="category-container m-5">
-                {categoryList?.map(c => <CategoryCard category={c} key={c.id}/>)}
+                {categoryList ? categoryList?.map(c => <CategoryCard name={c.name} id={c.id} key={c.id}/>)
+                    : (<section>No categories listed</section>)}
             </div>
             <div className="mb-4">
                 <h2 >...OR</h2>
@@ -31,3 +33,5 @@ export default function CategoryList() {
         </section>
     )
 }
+
+export default CategoryList;

@@ -1,20 +1,23 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getUserById } from "../../modules/authManager";
+import { getUserById } from "../../modules/auth/authManager";
+import IUser from "../../interfaces/IUser";
 
-export default function UserDetails({userProfile}) {
+const UserDetails: React.FC<{userProfile: IUser | null}> = ({userProfile}) => {
     const navigate = useNavigate();
-    const { userId } = useParams();
-    const [ user, setUser ] = useState();
+    const [ user, setUser ] = useState<IUser | undefined>();
+    const params = useParams<{ id: string | undefined }>();
+    const userId = params.id ? parseInt(params.id, 10) : undefined;
 
-    const getUser = () => {
-        (getUserById(userId)).then(userData => setUser(userData))
-    }
-
-    useEffect(() => {
-        getUser()
-    }, []);
-
+    if (userId !== undefined && userProfile?.userTypeId === 1) {
+        const getUser = () => {
+        getUserById(userId).then(userData => setUser(userData));
+        };
+        
+        useEffect(() => {
+            getUser()
+        }, []);
+    
     return (
         <>
             <div className="userprofile-container">
@@ -27,11 +30,13 @@ export default function UserDetails({userProfile}) {
                 </div>
                 <div className="px-5">
                     <button className="user-edit-btn"
-                    onClick={() => {navigate(`/users/edit/${user.id}`)}}>
+                    onClick={() => {navigate(`/users/edit/${user?.id}`)}}>
                     Edit
                     </button>
                 </div>
             </div>
-        </>
-    )
+        </>)
+    } else return <h2>User Not Found</h2>;
 }
+
+export default UserDetails;

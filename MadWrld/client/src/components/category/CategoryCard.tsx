@@ -1,8 +1,14 @@
+import React from 'react';
 import { CardBody, CardTitle } from 'reactstrap';
 import { useNavigate } from 'react-router-dom';
 
-export default function CategoryCard({category}) {
-    const navigate= useNavigate();
+interface CategoryCardProps {
+    id: number;
+    name: string;
+}
+
+const CategoryCard: React.FC<CategoryCardProps> = (category: CategoryCardProps) => {
+    const navigate = useNavigate();
 
     return (
         <div className="mb-3" onClick={() => navigate(`/category/${category.id}`)}>
@@ -14,3 +20,5 @@ export default function CategoryCard({category}) {
         </div>
     )
 }
+
+export default CategoryCard;

@@ -1,20 +1,26 @@
 import React, { useState } from "react";
 import { Form, FormGroup, Label, Input } from 'reactstrap';
 import { useNavigate, Link } from "react-router-dom";
-import { login } from "../../modules/authManager";
+import { login } from "../../modules/auth/authManager";
 
-export default function Login() {
+const LoginPage: React.FC = () => {
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
   const navigate = useNavigate();
 
-  const [email, setEmail] = useState();
-  const [password, setPassword] = useState();
-
-  const loginSubmit = (e) => {
+  const loginSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
-    login(email, password)
+      login(email, password)
       .then(() => navigate("/"))
       .catch(() => window.alert("Invalid email or password"));
   };
+
+  const handleEmailChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+    setEmail(e.target.value);
+  }
+  const handlePasswordChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+    setPassword(e.target.value);
+  }
 
   return (
     <Form 
@@ -28,7 +34,7 @@ export default function Login() {
             id="email"
             type="text"
             autoFocus
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={handleEmailChange}
           />
         </FormGroup>
         <FormGroup>
@@ -38,11 +44,12 @@ export default function Login() {
             className="login"
             id="password"
             type="password"
-            onChange={(e) => setPassword(e.target.value)}
+            value={password}
+            onChange={handlePasswordChange}
           />
         </FormGroup>
         <FormGroup>
-          <button className="navbar">Login</button>
+          <button className="navbar" type="submit">Login</button>
         </FormGroup>
         <em>
           Not registered? <Link to="/register">Register</Link>
@@ -51,3 +58,4 @@ export default function Login() {
     </Form>
   );
 }
+export default LoginPage;

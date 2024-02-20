@@ -1,14 +1,21 @@
+import React from "react";
 import { Navbar } from "reactstrap";
 import { Link } from "react-router-dom";
-import { logout } from "../../modules/authManager";
-import logo from "./mad-wrld-logo_cropped.png";
+import IUser from "../../interfaces/IUser";
+import { logout } from "../../modules/auth/authManager";
+//import logo from "../../assets/mad-wrld-logo_cropped.png";
 
-const Header = ({ isLoggedIn, userProfile }) => {
+interface HeaderProps {
+    isLoggedIn: boolean;
+    userProfile: IUser;
+}
+
+const Header:React.FC<HeaderProps> = ({ isLoggedIn, userProfile }) => {
 
     return (
         <>
             <div className="logo-container">
-                <img className="logo" alt="mad-wrld-logo" src={logo} />
+                {/*<img className="logo" alt="mad-wrld-logo" src={logo} />*/}
             </div>
             <Navbar>
                 <Link to="/">My Feed</Link>
@@ -19,13 +26,19 @@ const Header = ({ isLoggedIn, userProfile }) => {
                     Logged in users see Profile link
                     Unauthenticated users see nothing */}
                     
-                { isLoggedIn ?
-                    userProfile?.userTypeId === 1 ? <Link to="/users">Users</Link> :
-                    <Link to={`/users/${userProfile?.id}`}>Profile</Link>  : <></>}
+                { isLoggedIn ? (
+                    userProfile?.userTypeId === 1 ? (
+                    <Link to="/users">Users</Link>
+                    ) : (
+                    <Link to={`/users/${userProfile?.id}`}>Profile</Link>
+                    )
+                ) : (
+                  <></>
+                )}
                 { isLoggedIn && <div onClick= {logout}>Logout</div> } 
             </Navbar>
         </>
-    )
-}
+    );
+};
 
 export default Header;

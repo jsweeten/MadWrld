@@ -1,4 +1,5 @@
-import { getToken } from "./authManager";
+import { getToken } from "./auth/authManager";
+import ICategoryTemplate from "../interfaces/ICategoryTemplate";
 
 const _apiUrl = "/api/category";
 
@@ -21,7 +22,7 @@ export const getCategories = () => {
   });
 }
 
-export const getCategoryById = (id) => {
+export const getCategoryById = (id: number) => {
     return getToken().then((token) => {  
         return fetch(`${_apiUrl}/${id}`, {
             method: 'GET',
@@ -40,7 +41,7 @@ export const getCategoryById = (id) => {
     });
 }
 
-export const getByTemplateId = (id) => {
+export const getByTemplateId = (id: number) => {
     return getToken().then((token) => {  
         return fetch(`${_apiUrl}/categorytemplates/${id}`, {
             method: 'GET',
@@ -59,7 +60,7 @@ export const getByTemplateId = (id) => {
     });
 }
 
-export const addCategoryTemplate = (ct) => {
+export const addCategoryTemplate = (ct: ICategoryTemplate) => {
     return getToken().then((token) => {
       return fetch(`${_apiUrl}`, {
           method: "POST",
@@ -81,7 +82,7 @@ export const addCategoryTemplate = (ct) => {
     })
 }
 
-export const deleteCategoryTemplate = (ct) => {
+export const deleteCategoryTemplate = (ct: ICategoryTemplate) => {
     return getToken().then((token) => {
       return fetch(`${_apiUrl}/categorytemplates`, {
           method: "DELETE",

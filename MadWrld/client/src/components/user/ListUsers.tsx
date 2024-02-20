@@ -1,22 +1,24 @@
 import React, { useState, useEffect } from "react";
-import { getUsersList } from "../../modules/authManager";
+import { getUsersList } from "../../modules/auth/authManager";
 import UserCard from "./UserCard";
+import IUser from "../../interfaces/IUser";
 
-export default function ListUsers({userProfile}) {
+const ListUsers: React.FC<{userProfile: IUser}> = ({userProfile}) => {
     
-    const [ admins, setAdmins ] = useState([]);
-    const [ authors, setAuthors ] = useState([]);
+    const [ admins, setAdmins ] = useState<IUser[]>([]);
+    const [ authors, setAuthors ] = useState<IUser[]>([]);
     
     const getAllUsers = () => {
-        getUsersList().then(userData => userData.map(user =>
-        {
-            if (user?.userType?.name === "Admin") {
-                return setAdmins(previousState => [...previousState, user])}
-            else {
-                return setAuthors(previousState => [...previousState, user])
-            }
-        }))
-    }
+        getUsersList().then((userData: IUser[]) => {
+            userData.forEach(user => {
+                if (user?.userTypeId === 1) {
+                    setAdmins(previousState => [...previousState, user]);
+                } else {
+                    setAuthors(previousState => [...previousState, user]);
+                }
+            });
+        });
+    };
 
     useEffect(() => {
         getAllUsers()
@@ -34,7 +36,7 @@ export default function ListUsers({userProfile}) {
                 <header>Administrators</header>
             </div>
             <article className="px-5">
-                {admins.map((admin) => {
+                {admins?.map((admin) => {
                 return (
                     < UserCard user={admin} key={`admin--${admin.id}`}/>
                 )
@@ -44,7 +46,7 @@ export default function ListUsers({userProfile}) {
                 <header>Authors</header>
             </div>
             <article className="px-5">
-                {authors.map((author) => {
+                {authors?.map((author) => {
                 return (
                     < UserCard user={author} key={`author--${author.id}`}/>
                 )
@@ -56,3 +58,5 @@ export default function ListUsers({userProfile}) {
         </section>
     )
 }
+
+export default ListUsers;
