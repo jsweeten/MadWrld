@@ -1,18 +1,18 @@
 import React, { useState } from "react";
-import { Button, Form, FormGroup, Label, Input } from 'reactstrap';
+import { Form, FormGroup, Label, Input } from 'reactstrap';
 import { useNavigate } from "react-router-dom";
 import { register } from "../../modules/auth/authManager";
 
 const Register: React.FC = () => {
   const navigate = useNavigate();
 
-  const [firstName, setFirstName] = useState();
-  const [lastName, setLastName] = useState();
-  const [email, setEmail] = useState();
-  const [password, setPassword] = useState();
-  const [confirmPassword, setConfirmPassword] = useState();
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
 
-  const registerClick = (e) => {
+  const registerSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
     if (password && password !== confirmPassword) {
       alert("Passwords don't match. Do better.");
@@ -20,15 +20,31 @@ const Register: React.FC = () => {
       const userProfile = {
         firstName,
         lastName,
-        email,
+        email
       };
       register(userProfile, password).then(() => navigate("/"))
-      .catch(() => window.alert("Something went wrong while attempting to create user."));;
+      .catch(() => window.alert("Something went wrong while attempting to create user."));
     }
   };
 
+  const handleEmailChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+    setEmail(e.target.value);
+  }
+  const handleFirstNameChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+    setFirstName(e.target.value);
+  }
+  const handleLastNameChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+    setLastName(e.target.value);
+  }
+  const handlePasswordChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+    setPassword(e.target.value);
+  }
+  const handleConfirmPasswordChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+    setConfirmPassword(e.target.value);
+  }
+
   return (
-    <Form onSubmit={registerClick}>
+    <Form onSubmit={registerSubmit}>
       <fieldset>
         <FormGroup>
           <Label htmlFor="firstName">First Name</Label>
@@ -36,7 +52,7 @@ const Register: React.FC = () => {
             className="login"
             id="firstName"
             type="text"
-            onChange={(e) => setFirstName(e.target.value)}
+            onChange={handleFirstNameChange}
           />
         </FormGroup>
         <FormGroup>
@@ -45,7 +61,7 @@ const Register: React.FC = () => {
             className="login"
             id="lastName"
             type="text"
-            onChange={(e) => setLastName(e.target.value)}
+            onChange={handleLastNameChange}
           />
         </FormGroup>
         <FormGroup>
@@ -54,7 +70,7 @@ const Register: React.FC = () => {
             className="login"
             id="email"
             type="text"
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={handleEmailChange}
           />
         </FormGroup>
         <FormGroup>
@@ -63,7 +79,7 @@ const Register: React.FC = () => {
             className="login"
             id="password"
             type="password"
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={handlePasswordChange}
           />
         </FormGroup>
         <FormGroup>
@@ -72,7 +88,7 @@ const Register: React.FC = () => {
             className="login"
             id="confirmPassword"
             type="password"
-            onChange={(e) => setConfirmPassword(e.target.value)}
+            onChange={handleConfirmPasswordChange}
           />
         </FormGroup>
         <FormGroup>

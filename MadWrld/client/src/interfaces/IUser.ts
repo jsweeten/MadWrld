@@ -1,16 +1,15 @@
-interface IUser {
-    id: number;
-    firebaseUUID: string;
+export interface INewUser {
     firstName: string;
     lastName: string;
     email: string;
-    userTypeId: number;
-    userType: IUserType;
+}
+export interface IUserWithUUID extends INewUser {
+    firebaseUUID: string;
 }
 
-interface IUserType {
+export interface IUser extends IUserWithUUID {
     id: number;
-    name: string;
+    userTypeId: number;
 }
 
 export default IUser;

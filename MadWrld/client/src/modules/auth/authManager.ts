@@ -2,8 +2,9 @@ import auth from './firebase';
 import { signInWithEmailAndPassword,
     createUserWithEmailAndPassword,
     onAuthStateChanged,
-    signOut } from 'firebase/auth';
-import IUser from '../../interfaces/IUser';
+    signOut, 
+    UserCredential} from 'firebase/auth';
+import IUser, { INewUser, IUserWithUUID } from '../../interfaces/IUser';
 
 const _apiUrl = "/api/userprofile";
 
@@ -58,7 +59,7 @@ const _doesUserExist = (firebaseUserId: string) => {
     }).then(resp => resp.ok));
 };
 
-const _saveUser = (userProfile: IUser) => {
+const _saveUser = async (userProfile: IUserWithUUID): Promise<void> => {
   return getToken().then((token: string) =>
     fetch(_apiUrl, {
       method: "POST",
@@ -103,12 +104,18 @@ export const logout = () => {
   signOut(auth);
 };
 
-export const register = (userProfile: IUser, password: string) => {
-  return createUserWithEmailAndPassword(auth, userProfile.email, password)
-    .then((createResponse) => _saveUser({
-      ...userProfile,
-      firebaseUUID: createResponse.user.uid
-    }).then(() => _onLoginStatusChangedHandler(true)));
+export const register = async (userProfile: INewUser, password: string): Promise<IUserWithUUID> => {
+  try {
+    const userCredential: UserCredential = await createUserWithEmailAndPassword(auth, userProfile.email, password);
+    const firebaseUUID: string = userCredential.user.uid;
+    const completeUserData: IUserWithUUID = { ...userProfile, firebaseUUID };
+    await _saveUser(completeUserData);
+    _onLoginStatusChangedHandler(true);
+    return completeUserData;
+  } catch (error) {
+    console.error("Error with user registration:", error);
+    throw error;
+  }
 };
 
 

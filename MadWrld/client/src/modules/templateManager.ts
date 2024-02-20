@@ -42,7 +42,7 @@ export const getTemplateById = (id: number) => {
   });
 }
 
-export const addMadLib = (madlibAnswerArray, templateId: number) => {
+export const addMadLib = (madlibAnswerArray: string[], templateId: number) => {
   return getToken().then((token) => {
     return fetch(`${_apiUrl}/madlibform/${templateId}`, {
     method: "POST",

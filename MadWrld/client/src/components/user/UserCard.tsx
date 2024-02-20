@@ -1,6 +1,8 @@
+import React from 'react';
+import IUser from '../../interfaces/IUser';
 import { useNavigate } from 'react-router-dom';
 
-export default function UserCard({user}) {
+const UserCard:React.FC<{user: IUser}> = ({user}) => {
     const navigate = useNavigate();
 
     return (
@@ -21,3 +23,5 @@ export default function UserCard({user}) {
         </div>
     )
 }
+
+export default UserCard;

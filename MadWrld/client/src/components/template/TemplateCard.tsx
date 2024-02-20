@@ -1,7 +1,8 @@
-import {Card, CardBody, CardTitle, CardText, CardSubtitle } from 'reactstrap';
+import { CardBody, CardTitle, CardSubtitle } from 'reactstrap';
 import { useNavigate } from 'react-router-dom';
+import { ITemplate } from '../../interfaces/ITemplate';
 
-export default function TemplateCard({template}) {
+const TemplateCard:React.FC<{template: ITemplate}> = ({template}) => {
     const navigate= useNavigate();
 
     return (
@@ -14,9 +15,11 @@ export default function TemplateCard({template}) {
                         className="mb-2"
                         tag="h6"
                     >
-                        Created by user {template.user.firstName}
+                        Created by user {template?.user?.firstName}
                     </CardSubtitle>
             </CardBody>
         </div>
     )
 }
+
+export default TemplateCard;

@@ -2,8 +2,9 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Form, FormGroup, Input, Label } from "reactstrap"
 import { getTemplateById, addMadLib } from "../../modules/templateManager";
+import IUser from "../../interfaces/IUser";
 
-const TemplateForm:React.FC = ({userProfile}) => {
+const TemplateForm:React.FC<{userProfile: IUser | null}> = ({userProfile}) => {
     const [ currentTemplate, setCurrentTemplate ] = useState({})
     const [ partOfSpeech, setPartOfSpeech ] = useState([])
     const [ input1, setInput1 ] = useState()
