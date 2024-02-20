@@ -1,17 +1,16 @@
+import React from "react";
 import { Navbar } from "reactstrap";
 import { Link } from "react-router-dom";
-// import auth from "../../modules/auth/firebase";
-//import { logout } from "../../modules/auth/authManager";
+import IUser from "../../interfaces/IUser";
+import { logout } from "../../modules/auth/authManager";
 //import logo from "../../assets/mad-wrld-logo_cropped.png";
 
-const Header = () => {
-    // const handleLogout =  async () => {
-    //     try {
-    //         await auth.signOut();
-    //     } catch (error) {
-    //         console.error('Error logging out:', error);
-    //     }
-    // };
+interface HeaderProps {
+    isLoggedIn: boolean;
+    userProfile: IUser;
+}
+
+const Header:React.FC<HeaderProps> = ({ isLoggedIn, userProfile }) => {
 
     return (
         <>
@@ -27,7 +26,7 @@ const Header = () => {
                     Logged in users see Profile link
                     Unauthenticated users see nothing */}
                     
-                { /*isLoggedIn ? (
+                { isLoggedIn ? (
                     userProfile?.userTypeId === 1 ? (
                     <Link to="/users">Users</Link>
                     ) : (
@@ -36,7 +35,7 @@ const Header = () => {
                 ) : (
                   <></>
                 )}
-                { /*isLoggedIn && <div onClick= {handleLogout}>Logout</div> */} 
+                { isLoggedIn && <div onClick= {logout}>Logout</div> } 
             </Navbar>
         </>
     );

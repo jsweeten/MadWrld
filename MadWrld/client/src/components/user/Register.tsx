@@ -3,7 +3,7 @@ import { Button, Form, FormGroup, Label, Input } from 'reactstrap';
 import { useNavigate } from "react-router-dom";
 import { register } from "../../modules/auth/authManager";
 
-export default function Register() {
+const Register: React.FC = () => {
   const navigate = useNavigate();
 
   const [firstName, setFirstName] = useState();
@@ -82,3 +82,5 @@ export default function Register() {
     </Form>
   );
 }
+
+export default Register;

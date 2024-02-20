@@ -4,7 +4,7 @@ import { Form, FormGroup, Input, Label } from "reactstrap"
 import { addAnswerTemplate, addTemplate } from "../../modules/templateManager";
 import { getCategories, addCategoryTemplate } from "../../modules/categoryManager";
 
-export default function CreateTemplate() {
+const CreateTemplate:React.FC = () => {
     const navigate = useNavigate();
     const [ template, setTemplate ] = useState({});
     const [ categories, setCategories ] = useState([]);
@@ -241,3 +241,5 @@ export default function CreateTemplate() {
         </>
     )
 }
+
+export default CreateTemplate;
