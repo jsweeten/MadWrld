@@ -1,176 +1,199 @@
-import { ITemplate, ITemplateTitle } from "../interfaces/ITemplate";
+import ITemplate, { ITemplateTitle } from "../interfaces/ITemplate";
 import IAnswerTemplate from "../interfaces/IAnswerTemplate";
 import { getToken } from "./auth/authManager";
 
 const _apiUrl = "/api/template";
 
-export const getTemplates = () => {
-  return getToken().then((token) => {
-      return fetch(_apiUrl, {
-        method: 'GET',
-        headers: {
-            Authorization: `Bearer  ${token}`,
-        },
-    }).then((res) => {
-      if (res.ok) {
-        return res.json();
-      } else {
-          throw new Error(
-                "An unexpected error occurred",
-          );
-        }
-    });
-  });
-}
-
-export const getTemplateById = (id: number) => {
-  return getToken().then((token) => {  
-    return fetch(`${_apiUrl}/${id}`, {
-        method: 'GET',
-        headers: {
-            Authorization: `Bearer ${token}`,
-        },
-    }).then((res) => {
-        if (res.ok) {
-          return res.json();
-        } else {
-          throw new Error(
-              "An unknown error occurred while trying to get template.",
-          );
-        }
-    });
-  });
-}
-
-export const addMadLib = (madlibAnswerArray: string[], templateId: number) => {
-  return getToken().then((token) => {
-    return fetch(`${_apiUrl}/madlibform/${templateId}`, {
-    method: "POST",
-    headers: {
+export const getTemplates = async () => {
+  try {
+    const token = await getToken();
+    const response = await fetch(_apiUrl, {
+      method: "GET",
+      headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
-    },
-    body: JSON.stringify(madlibAnswerArray),
-      }).then((resp) => {
-      if (resp.ok) {
-          return resp.json();
-      } else if (resp.status === 401) {
-          throw new Error("Unauthorized");
-      } else {
-          throw new Error(
-          "An unknown error occurred while trying to save a new madlib.",
-          );
-      }
-      });
-  });
+      },
+    });
+
+    if (response.ok) {
+      return await response.json();
+    } else if (response.status === 401) {
+      throw new Error("Unauthorized");
+    } else {
+      throw new Error("An unknown error occurred while trying to save a new madlib.");
+    }
+  } catch (error) {throw new Error(`Error retrieving templates: ${error}`)};
 };
 
-export const addTemplate = (template: ITemplateTitle) => {
-  return getToken().then((token) => {
-    return fetch(_apiUrl, {
-    method: "POST",
-    headers: {
+export const getTemplateById = async (id: number) => {
+  try {
+    const token = await getToken();
+    const response = await fetch(`${_apiUrl}/${id}`, {
+      method: "GET",
+      headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
-    },
-    body: JSON.stringify(template),
-      }).then((resp) => {
-      if (resp.ok) {
-          return resp.json();
-      } else if (resp.status === 401) {
-          throw new Error("Unauthorized");
-      } else {
-          throw new Error(
-          "An unknown error occurred while trying to save a new madlib.",
-          );
-      }
-      });
-  });
+      },
+    });
+
+    if (response.ok) {
+      return await response.json();
+    } else if (response.status === 401) {
+      throw new Error("Unauthorized");
+    } else {
+      throw new Error("An unknown error occurred while trying to save a new madlib.");
+    }
+  } catch (error) {throw new Error(`Error retrieving templates: ${error}`)};
 };
 
-export const addAnswerTemplate = (sentence: IAnswerTemplate) => {
-  return getToken().then((token) => {
-    return fetch(`${_apiUrl}/answertemplate`, {
+export const addMadLib = async (madlibAnswerArray: string[], templateId: number) => {
+  try {
+    const token = await getToken();
+    const response = await fetch(`${_apiUrl}/madlibform/${templateId}`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(madlibAnswerArray),
+    });
+
+    if (response.ok) {
+      return await response.json();
+    } else if (response.status === 401) {
+      throw new Error("Unauthorized");
+    } else {
+      throw new Error("An unknown error occurred while trying to save a new madlib.");
+    }
+  } catch (error) {throw new Error(`Error adding madlib: ${error}`)};
+};
+
+export const addTemplate = async (template: ITemplateTitle) => {
+  try {
+    const token = await getToken();
+    const response = await fetch(_apiUrl, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(template),
+    });
+
+    if (response.ok) {
+      return await response.json();
+    } else if (response.status === 401) {
+      throw new Error("Unauthorized");
+    } else {
+      throw new Error("An unknown error occurred while trying to save a new template.");
+    }
+  } catch (error) {throw new Error(`Error adding template: ${error}`)};
+}
+
+export const addAnswerTemplate = async (sentence: IAnswerTemplate) => {
+  try {
+    const token = await getToken();
+    const response = await fetch(`${_apiUrl}/answertemplate`, {
     method: "POST",
     headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
     },
     body: JSON.stringify(sentence),
-      }).then((resp) => {
-      if (resp.ok) {
-          return resp.json();
-      } else if (resp.status === 401) {
-          throw new Error("Unauthorized");
-      } else {
-          throw new Error(
-          "An unknown error occurred while trying to save a new madlib.",
-          );
-      }
-      });
-  });
+    });
+
+    if (response.ok) {
+      return await response.json();
+    } else if (response.status === 401) {
+      throw new Error("Unauthorized");
+    } else {
+      throw new Error("An unknown error occurred while sending template");
+    }
+  } catch (error) {throw new Error(`Error posting template: ${error}`)};
 };
 
-export const editTemplate = (template: ITemplate) => {
-  return getToken().then((token) => {
-      return fetch(`${_apiUrl}/${template.id}`, {
-        method: "PUT",
-        headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(template),
-      }).then((resp) => {
-        if (!resp.ok) {
-          throw new Error("An unknown error occurred while trying to edit title.")
-        }
-      })
-  })
-}
-
-export const editAnswerTemplate = (answerTemplate: IAnswerTemplate) => {
-  return getToken().then((token) => {
-      return fetch(`${_apiUrl}/answertemplate/${answerTemplate.id}`, {
-          method: "PUT",
-          headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json"
-          },
-          body: JSON.stringify(answerTemplate),
-      }).then((resp) => {
-          if (!resp.ok) {
-            throw new Error("An unknown error occurred while trying to edit sentence.")
-          }
-      })
-  })
-}
-
-export const getTemplatesByUserId = () => {
-  return getToken().then((token) => {  
-    return fetch(`${_apiUrl}/user`, {
-        method: 'GET',
-        headers: {
-            Authorization: `Bearer ${token}`,
-        },
-    }).then((res) => {
-        if (res.ok) {
-          return res.json();
-        } else {
-          throw new Error(
-              "An unknown error occurred while trying to get template.",
-          );
-        }
+export const editTemplate = async (template: ITemplate) => {
+  try {
+    const token = await getToken();
+    const response = await fetch(`${_apiUrl}/${template.id}`, {
+    method: "PUT",
+    headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+    },
+    body: JSON.stringify(template),
     });
-  });
-}
 
-export const deleteTemplate = (id: number) => {
-  return getToken().then(token => {
-      return fetch(`${_apiUrl}/${id}`, {
-          method: "DELETE",
-          headers: {
-              Authorization: `Bearer ${token}`
-          }
-      })
-  })
-}
+    if (response.ok) {
+      return await response.json();
+    } else if (response.status === 401) {
+      throw new Error("Unauthorized");
+    } else {
+      throw new Error("An unknown error occurred while sending template");
+    }
+  } catch (error) {throw new Error(`Error posting template: ${error}`)};
+};
+
+export const editAnswerTemplate = async (answerTemplate: IAnswerTemplate) => {
+  try {
+    const token = await getToken();
+    const response = await fetch(`${_apiUrl}/answertemplate/${answerTemplate.id}`, {
+    method: "PUT",
+    headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+    },
+    body: JSON.stringify(answerTemplate),
+    });
+
+    if (response.ok) {
+      return await response.json();
+    } else if (response.status === 401) {
+      throw new Error("Unauthorized");
+    } else {
+      throw new Error("An unknown error occurred while sending template");
+    }
+  } catch (error) {throw new Error(`Error posting template: ${error}`)};
+};
+
+export const getTemplatesByUserId = async () => {
+  try {
+    const token = await getToken();
+    const response = await fetch(`${_apiUrl}/user`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (response.ok) {
+      return await response.json();
+    } else if (response.status === 401) {
+      throw new Error("Unauthorized");
+    } else {throw new Error("An unknown error occurred while retrieving user templates")};
+  } catch (error) {throw new Error(`Error retrieving templates: ${error}`)};
+};
+
+export const deleteTemplate = async (id: number): Promise<boolean> => {
+  try {
+    const token = await getToken()
+    const response = await fetch(`${_apiUrl}/${id}`, {
+      method: "DELETE",
+      headers: {
+          Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (response.ok) {
+      return true;
+    } else if (response.status === 401) {
+      throw new Error("Unauthorized");
+    } else {
+      throw new Error("Failed to delete template");
+    }
+  } catch (error) {
+    console.error(`An error occurred while attempting to delete template: ${error}`);
+    return false;
+  };
+};

@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from "react";
 import TemplateCard from "./TemplateCard";
 import { getTemplates } from "../../modules/templateManager";
+import { ITemplate } from "../../interfaces/ITemplate";
 
-export default function ListTemplates() {
-    const [ templatesList, setTemplatesList ] = useState([]);
+const ListTemplates: React.FC = () => {
+    const [ templatesList, setTemplatesList ] = useState<ITemplate[]>([]);
 
     const getAllTemplates = () => {
         getTemplates().then(templateData => setTemplatesList(templateData))
     }
-    
+
     useEffect(() => {
         getAllTemplates()
     }, []);
@@ -26,3 +27,5 @@ export default function ListTemplates() {
         </section>
     );
 }
+
+export default ListTemplates;
