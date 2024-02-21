@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import {Card, CardText, CardSubtitle } from 'reactstrap';
+import { Card, CardText } from 'reactstrap';
 import { getMadLibById, deleteMadLib } from '../../modules/madlibManager';
 
-export default function MadLibDetails({userProfile}) {
+const MadLibDetails: React.FC = ({userProfile}) => {
     const [ madlib, setMadLib ] = useState();
     const { id } = useParams();
     const navigate = useNavigate();
@@ -19,10 +19,9 @@ export default function MadLibDetails({userProfile}) {
     const deleteFunction = () => {
         const confirmation = window.confirm('Are you sure you want to delete this Mad Lib?')
         if (confirmation) {
-            deleteMadLib(id).then(window.alert('Mad Lib has been deleted!')).then(navigate('/userposts'))
+            deleteMadLib(id).then(() => window.alert('Mad Lib has been deleted!')).then(navigate('/userposts'))
         }
     }
-
          
     let madeByUser = null
     
@@ -63,3 +62,5 @@ export default function MadLibDetails({userProfile}) {
         </>
     )
 }
+
+export default MadLibDetails;
