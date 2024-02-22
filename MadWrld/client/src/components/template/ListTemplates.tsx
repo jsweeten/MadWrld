@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import TemplateCard from "./TemplateCard";
 import { getTemplates } from "../../modules/templateManager";
-import { ITemplate } from "../../interfaces/ITemplate";
+import ITemplate from "../../interfaces/ITemplate";
 
 const ListTemplates: React.FC = () => {
     const [ templatesList, setTemplatesList ] = useState<ITemplate[]>([]);
