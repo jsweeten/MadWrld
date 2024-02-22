@@ -1,6 +1,6 @@
 import { CardBody, CardTitle, CardSubtitle } from 'reactstrap';
 import { useNavigate } from 'react-router-dom';
-import { ITemplate } from '../../interfaces/ITemplate';
+import ITemplate from '../../interfaces/ITemplate';
 
 const TemplateCard:React.FC<{template: ITemplate}> = ({template}) => {
     const navigate= useNavigate();

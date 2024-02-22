@@ -4,7 +4,7 @@ import ICategory from "./ICategory";
 
 export default interface ITemplate extends ITemplateTitle {
     id: number;
-    user: IUser;
+    user: IUser | null;
     answerTemplates: IAnswerTemplate[];
     categories: ICategory[];
 }

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, ReactEventHandler } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Form, FormGroup, Input, Label } from "reactstrap"
 import { getTemplateById, addMadLib } from "../../modules/templateManager";
@@ -6,18 +6,38 @@ import IUser from "../../interfaces/IUser";
 import ITemplate from "../../interfaces/ITemplate";
 
 const TemplateForm:React.FC<{userProfile: IUser | null}> = ({userProfile}) => {
-    const [ currentTemplate, setCurrentTemplate ] = useState<ITemplate>();
+    const [ currentTemplate, setCurrentTemplate ] = useState<ITemplate>({
+        id: 0,
+        userId: 0,
+        title: '',
+        answerTemplates: [{
+            id: 0,
+            partOfSpeech: '',
+            templateId: 0,
+            position: 0,
+            content: ''
+        }],
+        user: {
+            id: 0,
+            userTypeId: 0,
+            firebaseUUID:'',
+            firstName: '',
+            lastName: '',
+            email: ''
+        },
+        categories: []
+    });
     const [ partOfSpeech, setPartOfSpeech ] = useState<string[]>();
-    const [ input1, setInput1 ] = useState<string>();
-    const [ input2, setInput2 ] = useState<string>();
-    const [ input3, setInput3 ] = useState<string>();
-    const [ input4, setInput4 ] = useState<string>();
-    const [ input5, setInput5 ] = useState<string>();
-    const [ input6, setInput6 ] = useState<string>();
-    const [ input7, setInput7 ] = useState<string>();
-    const [ input8, setInput8 ] = useState<string>();
-    const [ input9, setInput9 ] = useState<string>();
-    const [ input10, setInput10 ] = useState<string>();
+    const [ input1, setInput1 ] = useState<string>('');
+    const [ input2, setInput2 ] = useState<string>('');
+    const [ input3, setInput3 ] = useState<string>('');
+    const [ input4, setInput4 ] = useState<string>('');
+    const [ input5, setInput5 ] = useState<string>('');
+    const [ input6, setInput6 ] = useState<string>('');
+    const [ input7, setInput7 ] = useState<string>('');
+    const [ input8, setInput8 ] = useState<string>('');
+    const [ input9, setInput9 ] = useState<string>('');
+    const [ input10, setInput10 ] = useState<string>('');
     const params = useParams<{ id: string }>();
     const id = params.id ? parseInt(params.id, 10) : 0;
     const navigate = useNavigate();
@@ -48,7 +68,7 @@ const TemplateForm:React.FC<{userProfile: IUser | null}> = ({userProfile}) => {
     const wordsNeeded = currentTemplate?.answerTemplates?.map(answerTemplate =>
         answerTemplate?.partOfSpeech)
 
-    const answerArray = [input1,input2,input3,input4,input5,input6,input7,input8,input9,input10];
+    const answerArray: string[] = [input1,input2,input3,input4,input5,input6,input7,input8,input9,input10];
      
     let madeByUser = null;
     
@@ -56,14 +76,14 @@ const TemplateForm:React.FC<{userProfile: IUser | null}> = ({userProfile}) => {
         {
         madeByUser =
             <button className="input-container bg-danger"
-            onClick={() => navigate(`/templates/edit/${currentTemplate.id}`)}>
+            onClick={() => navigate(`/templates/edit/${currentTemplate?.id}`)}>
                 Edit / Delete
             </button>
         }
     
-    const submitTemplate = (e) => {
+    const submitTemplate: ReactEventHandler = (e) => {
         e.preventDefault();
-        addMadLib(answerArray, currentTemplate.id).then(() => {navigate("/userposts")});
+        addMadLib(answerArray, currentTemplate?.id).then(() => {navigate("/userposts")});
       };
 
     return (
