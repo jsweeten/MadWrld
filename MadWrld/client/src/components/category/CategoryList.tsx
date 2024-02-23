@@ -28,7 +28,7 @@ const CategoryList: React.FC = () => {
                 <h2 >...OR</h2>
             </div>
             <div>   
-                <a className="card-body px-5" href={"/templates/create"}>Click Here To Create Your Very Own Template!</a>
+                <Link className="card-body px-5" to={"/templates/create"}>Click Here To Create Your Very Own Template!</Link>
             </div>
         </section>
     )

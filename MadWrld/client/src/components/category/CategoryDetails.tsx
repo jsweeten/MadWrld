@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { getCategoryById } from '../../modules/categoryManager';
 import TemplateCard from '../template/TemplateCard';
 import ICategory from '../../interfaces/ICategory';
+import ITemplate from '../../interfaces/ITemplate';
 
 const CategoryDetails: React.FC = () => {
     const [ category, setCategory ] = useState<ICategory | undefined>();
@@ -24,7 +25,7 @@ const CategoryDetails: React.FC = () => {
                     <header>Templates</header>
                 </div>
                 <div className="template-container">
-                    {category?.templates?.map(template => 
+                    {category?.templates?.map((template: ITemplate) => 
                     < TemplateCard template={template} key={template.id}/>
                     )}
                 </div>

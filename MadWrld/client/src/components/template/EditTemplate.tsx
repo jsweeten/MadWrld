@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Form, FormGroup, Input, Label } from "reactstrap"
 import { getTemplateById, editTemplate, editAnswerTemplate, deleteTemplate } from "../../modules/templateManager";
-import { getCategories, getByTemplateId, addCategoryTemplate, deleteCategoryTemplate } from "../../modules/categoryManager";
+import { getCategories, addCategoryTemplate, deleteCategoryTemplate } from "../../modules/categoryManager";
 import ITemplate from "../../interfaces/ITemplate";
 import IUser from "../../interfaces/IUser";
 import ICategory from "../../interfaces/ICategory";
@@ -34,10 +34,10 @@ const EditTemplate: React.FC<{ userProfile: IUser }> = ({userProfile}) => {
         }],
         categories: []
     });
-    const [ categories, setCategories ] = useState<ICategory>([]);
-    const [ oldCategoryArray, setOldCategoryArray] = useState<number[]>([]);
+    const [ categories, setCategories ] = useState<ICategory[]>([]);
     const [ newCategoryArray, setNewCategoryArray] = useState<number[]>([]);
     const [ sentences, setSentences ] = useState<IAnswerTemplate[]>([]);
+    let oldCategoryArray: number[] = [];
     
     useEffect(() => {
         const getAllCategories = async () => {
@@ -49,7 +49,7 @@ const EditTemplate: React.FC<{ userProfile: IUser }> = ({userProfile}) => {
             const templateData = await getTemplateById(existingTemplateId);
             setExistingTemplate(templateData);
             setSentences(templateData.answerTemplates);
-            setOldCategoryArray(templateData.categories.map((c) => c.id));
+            oldCategoryArray = templateData.categories.map((category: ICategory) => category.id);
         };
 
         getAllCategories();
