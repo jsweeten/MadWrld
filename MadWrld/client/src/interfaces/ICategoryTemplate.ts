@@ -1,5 +1,5 @@
 interface ICategoryTemplate {
-    id: number;
+    id?: number;
     categoryId: number;
     templateId: number;
 }

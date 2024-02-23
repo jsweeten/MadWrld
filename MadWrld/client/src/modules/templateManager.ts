@@ -11,7 +11,6 @@ export const getTemplates = async () => {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
       },
     });
 
@@ -32,7 +31,6 @@ export const getTemplateById = async (id: number) => {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
       },
     });
 
@@ -163,7 +161,6 @@ export const getTemplatesByUserId = async () => {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
       },
     });
 
