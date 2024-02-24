@@ -1,8 +1,13 @@
-import {Card, CardBody, CardTitle, CardText, CardSubtitle } from 'reactstrap';
+import { CardBody, CardTitle, CardSubtitle } from 'reactstrap';
 import { useNavigate } from 'react-router-dom';
 import IMadLib from '../../interfaces/IMadLib';
 
-const MadLibCard: React.FC<IMadLib> = ({madlib}) => {
+
+interface MadLibCardProps {
+    madlib: IMadLib;
+}
+
+const MadLibCard: React.FC<MadLibCardProps> = ({madlib}) => {
     const navigate = useNavigate();
 
     return (

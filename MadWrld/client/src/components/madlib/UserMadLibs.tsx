@@ -6,8 +6,10 @@ import { getTemplatesByUserId } from "../../modules/templateManager";
 import { Card } from "reactstrap";
 import TemplateCard from "../template/TemplateCard";
 import "./MadLib.css";
+import IMadLib from "../../interfaces/IMadLib";
+import ITemplate from "../../interfaces/ITemplate";
 
-export default function UserMadLibs() {
+const UserMadLibs: React.FC = () => {
     const navigate = useNavigate();
     const [ madlibsList, setMadLibsList ] = useState([]);
     const [ userTemplatesList, setUserTemplatesList ] = useState([]);
@@ -26,7 +28,7 @@ export default function UserMadLibs() {
 
     const templatesOrNah = () => {
         if (userTemplatesList?.length > 0) {
-            return userTemplatesList?.map(t => 
+            return userTemplatesList?.map((t: ITemplate) => 
                     <TemplateCard template={t} key={`template--${t.id}`}/>
             )
         } else {
@@ -48,7 +50,7 @@ export default function UserMadLibs() {
                     <header>Your MadLibs</header>
                 </div>
                 <div className="madlib-card container">
-                    {madlibsList?.map(madlib => 
+                    {madlibsList?.map((madlib: IMadLib) => 
                         < MadLibCard madlib={madlib} key={madlib.id} />
                     )}
                 </div>
@@ -64,3 +66,5 @@ export default function UserMadLibs() {
         </div>
     )
 }
+
+export default UserMadLibs;

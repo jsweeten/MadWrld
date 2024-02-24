@@ -2,14 +2,11 @@ import IUser from "./IUser";
 import IAnswerTemplate from "./IAnswerTemplate";
 import ICategory from "./ICategory";
 
-export default interface ITemplate extends ITemplateTitle {
-    id: number;
-    user: IUser | null;
-    answerTemplates: IAnswerTemplate[];
-    categories: ICategory[];
-}
-
-export interface ITemplateTitle {
-    userId: number;
+export default interface ITemplate {
+    id?: number;
     title: string;
+    user?: IUser;
+    userId?: number;
+    answerTemplates?: IAnswerTemplate[];
+    categories?: ICategory[];
 }

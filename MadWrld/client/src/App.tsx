@@ -9,9 +9,9 @@ import LoginPage from "./components/user/LoginPage";
 import { onLoginStatusChange, me } from "./modules/auth/authManager";
 
 const App: React.FC = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
   const [userProfile, setUserProfile] = useState<any>(null);
-  // const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     onLoginStatusChange(setIsLoggedIn);
@@ -26,7 +26,7 @@ const App: React.FC = () => {
         setIsLoggedIn(false);
         setUserProfile(null);
       }
-      // setLoading(false);
+      setLoading(false);
     });
 
     return () => unsubscribe();
@@ -42,7 +42,7 @@ const App: React.FC = () => {
 
   // The "isLoggedIn" state variable will be null until //  the app's connection to firebase has been established.
   //  Then it will be set to true or false by the "onLoginStatusChange" function
-  if (isLoggedIn === true) {
+  if (loading) {
     // Until we know whether or not the user is logged in or not, just show a spinner
     return <Spinner className="app-spinner dark" />;
   }
@@ -50,9 +50,9 @@ const App: React.FC = () => {
   return (
     <div className="App">
       <BrowserRouter>
-        <Header isLoggedIn={isLoggedIn} userProfile={userProfile} />
+        <Header isLoggedIn={isLoggedIn ?? false} userProfile={userProfile} />
         {isLoggedIn ? (
-          <ApplicationViews isLoggedIn={isLoggedIn} userProfile={userProfile} />
+          <ApplicationViews userProfile={userProfile} />
         ) : (
           <LoginPage />
         )}

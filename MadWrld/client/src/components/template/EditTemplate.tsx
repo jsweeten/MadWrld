@@ -8,14 +8,14 @@ import IUser from "../../interfaces/IUser";
 import ICategory from "../../interfaces/ICategory";
 import IAnswerTemplate from "../../interfaces/IAnswerTemplate";
 
-const EditTemplate: React.FC<{ userProfile: IUser }> = ({userProfile}) => {
+const EditTemplate: React.FC<{ userProfile: IUser | null}> = ({userProfile}) => {
     const navigate = useNavigate();
     const params = useParams<{ id: string }>();
     const existingTemplateId = params.id ? parseInt(params.id, 10) : 0;
     const [ existingTemplate, setExistingTemplate ] = useState<ITemplate>({
         id: 0,
         userId: 0,
-        user: null,
+        user: undefined,
         title: '',
         answerTemplates: [],
         categories: []
@@ -23,7 +23,7 @@ const EditTemplate: React.FC<{ userProfile: IUser }> = ({userProfile}) => {
     const [ template, setTemplate ] = useState<ITemplate>({
         id: 0,
         userId: 0,
-        user: null,
+        user: undefined,
         title: '',
         answerTemplates: [{
             id: 0,
@@ -70,14 +70,14 @@ const EditTemplate: React.FC<{ userProfile: IUser }> = ({userProfile}) => {
     const categoryHelper = (template: ITemplate) => {
         oldCategoryArray.forEach((c) => {
             if (!newCategoryArray.includes(c)) {
-                const newCategoryTemplate = { templateId: template.id, categoryId: c };
+                const newCategoryTemplate = { templateId: template.id ?? 0, categoryId: c };
                 deleteCategoryTemplate(newCategoryTemplate);
             }
         });
 
         newCategoryArray.forEach((c) => {
             if (!oldCategoryArray.includes(c)) {
-                const newCategoryTemplate = { templateId: template.id, categoryId: c };
+                const newCategoryTemplate = { templateId: template.id ?? 0, categoryId: c };
                 addCategoryTemplate(newCategoryTemplate);
             }
         });

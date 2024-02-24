@@ -1,4 +1,4 @@
-import ITemplate, { ITemplateTitle } from "../interfaces/ITemplate";
+import ITemplate from "../interfaces/ITemplate";
 import IAnswerTemplate from "../interfaces/IAnswerTemplate";
 import { getToken } from "./auth/authManager";
 
@@ -66,7 +66,7 @@ export const addMadLib = async (madlibAnswerArray: string[], templateId: number)
   } catch (error) {throw new Error(`Error adding madlib: ${error}`)};
 };
 
-export const addTemplate = async (template: ITemplateTitle) => {
+export const addTemplate = async (template: ITemplate) => {
   try {
     const token = await getToken();
     const response = await fetch(_apiUrl, {
