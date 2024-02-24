@@ -2,10 +2,35 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Card, CardText } from 'reactstrap';
 import { getMadLibById, deleteMadLib } from '../../modules/madlibManager';
+import IUser from '../../interfaces/IUser';
 
-const MadLibDetails: React.FC = ({userProfile}) => {
-    const [ madlib, setMadLib ] = useState();
-    const { id } = useParams();
+interface MadLibDetailsProps {
+    userProfile: IUser | null;
+}
+
+const MadLibDetails: React.FC<MadLibDetailsProps> = ({userProfile}) => {
+    const params = useParams<{ id: string }>();
+    const id = params.id ? parseInt(params.id, 10) : 0;
+    const [ madlib, setMadLib ] = useState({
+        id: 0,
+        templateId: 0,
+        userProfileId: 0,
+        template: {
+            id: 0,
+            user: null,
+            userId: 0,
+            title: '',
+            answerTemplates: [],
+            categories: []
+        },
+        userProfile: {
+            firstName: null,
+            lastName: null,
+            email: null
+        },
+        inputs: '',
+        story: '',
+    });
     const navigate = useNavigate();
 
     const getMadLibDetails = () => {
@@ -19,11 +44,13 @@ const MadLibDetails: React.FC = ({userProfile}) => {
     const deleteFunction = () => {
         const confirmation = window.confirm('Are you sure you want to delete this Mad Lib?')
         if (confirmation) {
-            deleteMadLib(id).then(() => window.alert('Mad Lib has been deleted!')).then(navigate('/userposts'))
+            deleteMadLib(id).then(() =>
+            window.alert('Mad Lib has been deleted!'))
+            .then(() => navigate('/userposts'));
         }
     }
          
-    let madeByUser = null
+    let madeByUser = null;
     
     if (madlib?.userProfileId === userProfile?.id)
         {
@@ -46,7 +73,6 @@ const MadLibDetails: React.FC = ({userProfile}) => {
                     </CardText>
                     <h4
                         className="mb-2"
-                        tag="h6"
                     >
                         Created by user {madlib?.userProfile?.firstName}
                     </h4>

@@ -4,7 +4,7 @@ import { getUserById, deleteUser, editUserInfo, getAllUserTypes } from "../../mo
 import { Form, FormGroup, Input, Label } from "reactstrap"
 import IUser from "../../interfaces/IUser";
         
-const EditUser: React.FC<{ userProfile: IUser }> = ({userProfile}) => {
+const EditUser: React.FC<{ userProfile: IUser | null}> = ({userProfile}) => {
     const navigate = useNavigate();
     const params = useParams<{ id: string }>();
     const [ oldUser, setOldUser ] = useState<IUser>({id: 0, firstName: "", lastName: "", email: "", userTypeId: 0, firebaseUUID: ""});
@@ -53,7 +53,7 @@ const EditUser: React.FC<{ userProfile: IUser }> = ({userProfile}) => {
         if (confirmation) {
             deleteUser(oldUser.id)
             .then(() => window.alert("User has been deleted!"))
-            .then(() => userProfile.userTypeId === 1 ? navigate("/users") : navigate("/"))
+            .then(() => userProfile?.userTypeId === 1 ? navigate("/users") : navigate("/"))
             .catch(error => console.error("Error deleting user: ", error));
         }
     };

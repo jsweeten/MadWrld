@@ -3,7 +3,7 @@ import { getUsersList } from "../../modules/auth/authManager";
 import UserCard from "./UserCard";
 import IUser from "../../interfaces/IUser";
 
-const ListUsers: React.FC<{userProfile: IUser}> = ({userProfile}) => {
+const ListUsers: React.FC<{userProfile: IUser | null}> = ({userProfile}) => {
     
     const [ admins, setAdmins ] = useState<IUser[]>([]);
     const [ authors, setAuthors ] = useState<IUser[]>([]);
@@ -27,7 +27,7 @@ const ListUsers: React.FC<{userProfile: IUser}> = ({userProfile}) => {
     return (
         <section>
             <div>
-                <h1 className="m-4">Welcome to the user management page, {userProfile.firstName}</h1>
+                <h1 className="m-4">Welcome to the user management page, {userProfile?.firstName}</h1>
             </div>
             <div>
                 <h2>Here is a list of all registered users:</h2>

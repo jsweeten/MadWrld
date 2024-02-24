@@ -1,5 +1,5 @@
 interface IAnswerTemplate {
-    id: number;
+    id?: number;
     templateId: number;
     position: number;
     content: string;
