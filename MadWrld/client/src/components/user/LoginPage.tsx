@@ -2,15 +2,17 @@ import React, { useState } from "react";
 import { Form, FormGroup, Label, Input } from 'reactstrap';
 import { useNavigate, Link } from "react-router-dom";
 import { login } from "../../modules/auth/authManager";
+import { useAuth } from "../../modules/auth/authContext";
 
 const LoginPage: React.FC = () => {
+  const { setUserProfile } = useAuth();
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const navigate = useNavigate();
 
   const loginSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
-      login(email, password)
+      login(email, password, setUserProfile)
       .then(() => navigate("/"))
       .catch(() => window.alert("Invalid email or password"));
   };

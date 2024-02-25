@@ -2,13 +2,14 @@ import React, { useState, useEffect, FormEvent, ChangeEvent } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Form, FormGroup, Input, Label } from "reactstrap"
 import { getTemplateById, addMadLib } from "../../modules/templateManager";
-import IUser from "../../interfaces/IUser";
 import ITemplate from "../../interfaces/ITemplate";
+import { useAuth } from "../../modules/auth/authContext";
 
-const TemplateForm:React.FC<{ userProfile:IUser | null }> = ({userProfile}) => {
+const TemplateForm:React.FC = () => {
     const [ currentTemplate, setCurrentTemplate ] = useState<ITemplate | null>(null);
     const [ answerInputs, setAnswerInputs ] = useState<string[]>([]);
     const { id } = useParams<{ id: string }>();
+    const { userProfile } = useAuth();
     const navigate = useNavigate();
     
     useEffect(() => {

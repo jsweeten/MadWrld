@@ -2,8 +2,10 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getUserById } from "../../modules/auth/authManager";
 import IUser from "../../interfaces/IUser";
+import { useAuth } from "../../modules/auth/authContext";
 
-const UserDetails: React.FC<{userProfile: IUser | null}> = ({userProfile}) => {
+const UserDetails: React.FC = () => {
+    const { userProfile } = useAuth();
     const navigate = useNavigate();
     const [ user, setUser ] = useState<IUser | undefined>();
     const params = useParams<{ id: string | undefined }>();
