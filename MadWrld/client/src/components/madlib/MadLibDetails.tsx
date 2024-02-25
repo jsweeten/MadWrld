@@ -2,13 +2,10 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Card, CardText } from 'reactstrap';
 import { getMadLibById, deleteMadLib } from '../../modules/madlibManager';
-import IUser from '../../interfaces/IUser';
+import { useAuth } from '../../modules/auth/authContext';
 
-interface MadLibDetailsProps {
-    userProfile: IUser | null;
-}
-
-const MadLibDetails: React.FC<MadLibDetailsProps> = ({userProfile}) => {
+const MadLibDetails: React.FC = () => {
+    const { userProfile } = useAuth();
     const params = useParams<{ id: string }>();
     const id = params.id ? parseInt(params.id, 10) : 0;
     const [ madlib, setMadLib ] = useState({

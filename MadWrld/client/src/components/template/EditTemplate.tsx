@@ -4,11 +4,12 @@ import { Form, FormGroup, Input, Label } from "reactstrap"
 import { getTemplateById, editTemplate, editAnswerTemplate, deleteTemplate } from "../../modules/templateManager";
 import { getCategories, addCategoryTemplate, deleteCategoryTemplate } from "../../modules/categoryManager";
 import ITemplate from "../../interfaces/ITemplate";
-import IUser from "../../interfaces/IUser";
 import ICategory from "../../interfaces/ICategory";
 import IAnswerTemplate from "../../interfaces/IAnswerTemplate";
+import { useAuth } from "../../modules/auth/authContext";
 
-const EditTemplate: React.FC<{ userProfile: IUser | null}> = ({userProfile}) => {
+const EditTemplate: React.FC = () => {
+    const { userProfile } = useAuth();
     const navigate = useNavigate();
     const params = useParams<{ id: string }>();
     const existingTemplateId = params.id ? parseInt(params.id, 10) : 0;

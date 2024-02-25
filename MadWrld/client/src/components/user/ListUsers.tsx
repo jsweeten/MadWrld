@@ -2,9 +2,10 @@ import React, { useState, useEffect } from "react";
 import { getUsersList } from "../../modules/auth/authManager";
 import UserCard from "./UserCard";
 import IUser from "../../interfaces/IUser";
+import { useAuth } from "../../modules/auth/authContext";
 
-const ListUsers: React.FC<{userProfile: IUser | null}> = ({userProfile}) => {
-    
+const ListUsers: React.FC = () => {
+    const { userProfile } = useAuth();
     const [ admins, setAdmins ] = useState<IUser[]>([]);
     const [ authors, setAuthors ] = useState<IUser[]>([]);
     
