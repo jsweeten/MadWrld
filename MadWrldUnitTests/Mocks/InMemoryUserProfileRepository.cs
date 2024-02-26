@@ -26,7 +26,7 @@ namespace MadWrld.Tests.Mocks
         }
         public UserProfile GetByFirebaseUserId(string firebaseUserId)
         {
-            throw new NotImplementedException();
+            return _data.FirstOrDefault(u => u.FirebaseUserId == firebaseUserId);
         }
         public List<UserProfile> GetUsers()
         {

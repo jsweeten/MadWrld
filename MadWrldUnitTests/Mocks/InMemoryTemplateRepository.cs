@@ -6,9 +6,9 @@ using MadWrld.Repositories;
 
 namespace MadWrld.Tests.Mocks
 {
-    class InMemoryTemplateRepository : IMLTemplateRepository
+    class InMemoryTemplateRepository(List<MLTemplate> startingData) : IMLTemplateRepository
     {
-        private readonly List<MLTemplate> _data;
+        private readonly List<MLTemplate> _data = startingData;
 
         public List<MLTemplate> InternalData
         {
@@ -16,11 +16,6 @@ namespace MadWrld.Tests.Mocks
             {
                 return _data;
             }
-        }
-
-        public InMemoryTemplateRepository(List<MLTemplate> startingData)
-        {
-            _data = startingData;
         }
 
         public void Add(MLTemplate template)

@@ -1,6 +1,7 @@
 ﻿using MadWrld.Controllers;
 using MadWrld.Models;
 using MadWrld.Tests.Mocks;
+using MadWrld.Tests.Utils;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -11,14 +12,12 @@ namespace MadWrld.Tests
     public class UserProfileControllerTests : ControllerBase
     {
         [Fact]
-        private 
-
-        [Fact]
-        public void GetsAllUsers()
+        internal static void GetsAllUsers()
         {
             // Arrange
-            var users = CreateTestUsers(12);
-
+            var currentUser = TestUtils.CreateCurrentUser();
+            var users = TestUtils.CreateTestUsers(12);
+            users.Add(currentUser);
             var testUserProfileRepo = new InMemoryUserProfileRepository(users);
             var controller = new UserProfileController(testUserProfileRepo);
 
@@ -30,61 +29,37 @@ namespace MadWrld.Tests
             _ = Assert.IsType<UserProfile>(okResult);
             Assert.Equal(12, users.Count);
         }
+        [Fact]
+        internal static void GetUserById_ReturnsUser()
+        {
+            // Arrange
+            var users = TestUtils.CreateTestUsers(3);
+            var testUserProfileRepo = new InMemoryUserProfileRepository(users);
+            var controller = new UserProfileController(testUserProfileRepo);
+            var userId = 2;
 
-        private List<UserProfile> CreateTestUsers(int count)
-        {
-            var users = new List<UserProfile>();
-            for (var i = 1; i <= count; i++)
-            {
-                users.Add(new UserProfile()
-                {
-                    Id = i,
-                    FirstName = $"User {i} first name",
-                    LastName = $"User {i} last name",
-                    Email = $"user{i}@internet.com",
-                    UserTypeId = GetRandomUserTypeId(),
-                    FirebaseUserId = "twentyletterslongggg"
-                }); ;
-            }
-            return users;
-        }
-        private static int GetRandomUserTypeId()
-        {
-            Random random = new Random();
-            return random.Next(1, 3);
-        }
+            // Act
+            var result = controller.GetUserById(userId);
 
-        private List<MLAnswerTemplate> CreateTestAnswerTemplates(int id)
-        {
-            var answerTemplates = new List<MLAnswerTemplate>();
-            for (var i = 1; i < 10; i++)
-            {
-                answerTemplates.Add(new MLAnswerTemplate()
-                {
-                    Id = i,
-                    TemplateId = id,
-                    Position = i,
-                    PartOfSpeech = "Noun",
-                    Content = $"This is a test!"
-                });
-            }
-            return answerTemplates;
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            var userProfile = Assert.IsType<UserProfile>(okResult.Value);
+            Assert.Equal(userId, userProfile.Id);
         }
-        private List<MadLib> CreateTestMadLib(int count, int userId, int templateId)
+        [Fact]
+        internal static void GetUserById_ReturnsNotFound_WhenUserDoesNotExist()
         {
-            var madlibs = new List<MadLib>();
-            for (var i = 1; i <= count; i++)
-            {
-                madlibs.Add(new MadLib()
-                {
-                    Id = i,
-                    TemplateId = templateId,
-                    UserProfileId = userId,
-                    Inputs = "A string of user inputs",
-                    Story = "A story comprised of answer templates and user inputs"
-                });
-            }
-            return madlibs;
+            // Arrange
+            var users = TestUtils.CreateTestUsers(3);
+            var testUserProfileRepo = new InMemoryUserProfileRepository(users);
+            var controller = new UserProfileController(testUserProfileRepo);
+            var userId = 10; // Assuming user with ID 10 does not exist in the mock data
+
+            // Act
+            var result = controller.GetUserById(userId);
+
+            // Assert
+            Assert.IsType<NotFoundResult>(result);
         }
     }
 }
