@@ -6,11 +6,11 @@ using MadWrld.Repositories;
 
 namespace MadWrld.Tests.Mocks
 {
-    class InMemoryUserProfileRepository : IUserProfileRepository
+    class InMemoryUserProfileRepository(List<UserProfile> startingData) : IUserProfileRepository
     {
-        private readonly List<UserProfile> _data;
+        private readonly List<UserProfile> _data = startingData;
 
-        public List<UserProfile> InternalData
+        internal List<UserProfile> InternalData
         {
             get
             {
@@ -18,10 +18,6 @@ namespace MadWrld.Tests.Mocks
             }
         }
 
-        public InMemoryUserProfileRepository(List<UserProfile> startingData)
-        {
-            _data = startingData;
-        }
         public void Add(UserProfile user)
         {
             var lastUser = _data.Last();
@@ -30,7 +26,7 @@ namespace MadWrld.Tests.Mocks
         }
         public UserProfile GetByFirebaseUserId(string firebaseUserId)
         {
-            throw new NotImplementedException();
+            return _data.FirstOrDefault(u => u.FirebaseUserId == firebaseUserId);
         }
         public List<UserProfile> GetUsers()
         {
