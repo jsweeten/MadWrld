@@ -1,27 +1,23 @@
-﻿using MadWrld.Models;
-using MadWrld.Repositories;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Security.Claims;
+using MadWrld.Models;
+using MadWrld.Repositories;
+using Microsoft.AspNetCore.Http;
 
 namespace MadWrld.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class UserProfileController : ControllerBase
+    public class UserProfileController(IUserProfileRepository userProfileRepository, IHttpContextAccessor httpContextAccessor) : ControllerBase
     {
-        private readonly IUserProfileRepository _userProfileRepository;
-        public UserProfileController(IUserProfileRepository userProfileRepository)
-        {
-            _userProfileRepository = userProfileRepository;
-        }
+        private readonly IUserProfileRepository _userProfileRepository = userProfileRepository;
+        private readonly UserProfile _currentUser = httpContextAccessor.HttpContext.Items["CurrentUser"] as UserProfile;
 
         [HttpGet("{firebaseUserId}")]
         public IActionResult GetUserProfile(string firebaseUserId)
         {
-            return Ok(_userProfileRepository.GetByFirebaseUserId(firebaseUserId));
+            return Ok(_userProfileRepository.GetByFirebaseUserIdAsync(firebaseUserId));
         }
         
         [HttpGet("usertype")]
@@ -30,37 +26,10 @@ namespace MadWrld.Controllers
             return Ok(_userProfileRepository.GetUserTypes());
         }
 
-        [HttpGet("DoesUserExist/{firebaseUserId}")]
-        public IActionResult DoesUserExist(string firebaseUserId)
-        {
-            var userProfile = _userProfileRepository.GetByFirebaseUserId(firebaseUserId);
-
-            if (userProfile == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(userProfile);
-        }
-
-        [HttpGet("Me")]
-        public IActionResult Me()
-        {
-            var currentUserProfile = GetCurrentUserProfile();
-            if (currentUserProfile == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(currentUserProfile);
-        }
-
         [HttpGet]
         public IActionResult GetAllUsers()
         {
-            var currentUserProfile = GetCurrentUserProfile();
-
-            if (currentUserProfile.UserType.Name == "Admin")
+            if (_currentUser.UserTypeId == 1)
             {
                 return Ok(_userProfileRepository.GetUsers());
             }
@@ -73,7 +42,6 @@ namespace MadWrld.Controllers
         [HttpGet("details/{id}")]
         public IActionResult GetUserById(int id)
         {
-            var currentUserProfile = GetCurrentUserProfile();
             var userProfile = _userProfileRepository.GetById(id);
             
             if (userProfile == null)
@@ -81,7 +49,7 @@ namespace MadWrld.Controllers
                 return NotFound();
             }
 
-            if (currentUserProfile.UserType.Name == "Admin" || currentUserProfile.Id == userProfile.Id)
+            if (_currentUser.UserTypeId == 1 || _currentUser.Id == userProfile.Id)
             {
                 return Ok(userProfile);
             }
@@ -105,12 +73,9 @@ namespace MadWrld.Controllers
         [HttpPut("{id}")]
         public IActionResult Edit(UserProfile userProfile)
         {
-            var currentUserProfile = GetCurrentUserProfile();
-
-            if (userProfile.Id == currentUserProfile.Id || currentUserProfile.UserTypeId == 1)
+            if (userProfile.Id == _currentUser.Id || _currentUser.UserTypeId == 1)
             {
                 _userProfileRepository.Update(userProfile);
-            
                 return NoContent();
             }
 
@@ -122,14 +87,7 @@ namespace MadWrld.Controllers
         public IActionResult Delete(int id)
         {
             _userProfileRepository.Remove(id);
-
             return NoContent();
-        }
-
-        private UserProfile GetCurrentUserProfile()
-        {
-            var firebaseUserId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
-            return _userProfileRepository.GetByFirebaseUserId(firebaseUserId);
         }
     }
 }

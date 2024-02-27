@@ -1,41 +1,32 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 using MadWrld.Models;
 using MadWrld.Repositories;
-using System.Collections.Generic;
-using System;
+using Microsoft.AspNetCore.Http;
+using MadWrld.Utils;
 
 namespace MadWrld.Controllers
 {
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class TemplateController : ControllerBase
+    public class TemplateController(IMLTemplateRepository mlTemplateRepository,
+        IMadLibRepository madlibRepository,
+        IMLAnswerTemplateRepository mlAnswerTemplateRepository,
+        IHttpContextAccessor httpContextAccessor) : ControllerBase
     {
-        private readonly IMLTemplateRepository _mlTemplateRepository;
-        private readonly IUserProfileRepository _userProfileRepository;
-        private readonly IMadLibRepository _madlibRepository;
-        private readonly IMLAnswerTemplateRepository _mlAnswerTemplateRepository;
-        public TemplateController(
-            IMLTemplateRepository mlTemplateRepository,
-            IUserProfileRepository userProfileRepository,
-            IMadLibRepository madlibRepository,
-            IMLAnswerTemplateRepository mlAnswerTemplateRepository)
-        {
-            _mlTemplateRepository = mlTemplateRepository;
-            _userProfileRepository = userProfileRepository;
-            _madlibRepository = madlibRepository;
-            _mlAnswerTemplateRepository = mlAnswerTemplateRepository;
-        }
+        private readonly UserProfile _currentUser = httpContextAccessor.HttpContext.Items["CurrentUser"] as UserProfile;
+        private readonly IMLTemplateRepository _mlTemplateRepository = mlTemplateRepository;
+        private readonly IMLAnswerTemplateRepository _mlAnswerTemplateRepository = mlAnswerTemplateRepository;
+        private readonly IMadLibRepository _madlibRepository = madlibRepository;
         
         // GET: api/<TemplateController>
         [HttpGet("user")]
         public IActionResult GetTemplatesByUser()
         {
-            var currentUser = GetCurrentUserProfile();
-
-            return Ok(_mlTemplateRepository.GetByUserId(currentUser.Id));
+            return Ok(_mlTemplateRepository.GetByUserId(_currentUser.Id));
         }
 
         // GET api/<TemplateController>/5
@@ -54,13 +45,12 @@ namespace MadWrld.Controllers
         [HttpPost]
         public IActionResult PostTemplate(MLTemplate template)
         {
-            var currentUserProfile = GetCurrentUserProfile();
-            if (currentUserProfile.UserType.Name != "Admin" || currentUserProfile.Id != template.UserId)
+            if (_currentUser.UserTypeId == 1 || _currentUser.Id != template.UserId)
             {
                 return Unauthorized();
             }
 
-            template.UserId = currentUserProfile.Id; 
+            template.UserId = _currentUser.Id; 
             _mlTemplateRepository.Add(template);
             return CreatedAtAction(
             nameof(Get), new { id = template.Id }, template);
@@ -79,10 +69,7 @@ namespace MadWrld.Controllers
         [HttpPost("madlibform/{templateid}")]
         public IActionResult PostMadLib(List<string> inputs, int templateId)
         {
-            var currentUserProfile = GetCurrentUserProfile();
-
             var currentTemplate = _mlTemplateRepository.GetById(templateId);
-            
             var completedMadLib = new MadLib();
 
             try
@@ -98,7 +85,7 @@ namespace MadWrld.Controllers
                 Console.WriteLine(ex.ToString());
             }
 
-            completedMadLib.UserProfileId = currentUserProfile.Id;
+            completedMadLib.UserProfileId = _currentUser.Id;
             completedMadLib.TemplateId = currentTemplate.Id;
             _madlibRepository.Add(completedMadLib);
             return CreatedAtAction(
@@ -141,14 +128,7 @@ namespace MadWrld.Controllers
         public IActionResult Delete(int id)
         {
             _mlTemplateRepository.Remove(id);
-
             return NoContent();
-        }
-
-        private UserProfile GetCurrentUserProfile()
-        {
-            var firebaseUserId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
-            return _userProfileRepository.GetByFirebaseUserId(firebaseUserId);
         }
     }
 }

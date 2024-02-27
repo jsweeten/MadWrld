@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using MadWrld.Repositories;
+using MadWrld.Middleware;
 
 namespace MadWrld
 {
@@ -31,8 +32,7 @@ namespace MadWrld
 
             var firebaseProjectId = Configuration.GetValue<string>("FirebaseProjectId");
             var googleTokenUrl = $"https://securetoken.google.com/{firebaseProjectId}";
-            services
-                .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
                     options.Authority = googleTokenUrl;
@@ -51,7 +51,7 @@ namespace MadWrld
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "MadWrld", Version = "v1" });
             });
-
+            services.AddHttpContextAccessor();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -71,8 +71,8 @@ namespace MadWrld
                 });
             }
 
+            app.UseMiddleware<CurrentUserMiddleware>();
             app.UseHttpsRedirection();
-
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();

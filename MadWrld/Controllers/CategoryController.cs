@@ -1,29 +1,19 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 using MadWrld.Models;
 using MadWrld.Repositories;
-using System.Collections.Generic;
-using System;
-
 
 namespace MadWrld.Controllers
 {
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class CategoryController : ControllerBase
+    public class CategoryController(
+        ICategoryRepository categoryRepository,
+        IMLTemplateRepository mlTemplateRepository) : ControllerBase
     {
-        private readonly ICategoryRepository _categoryRepository;
-        private readonly IMLTemplateRepository _mlTemplateRepository;
-
-        public CategoryController(
-            ICategoryRepository categoryRepository,
-            IMLTemplateRepository mlTemplateRepository)
-        {
-            _categoryRepository = categoryRepository;
-            _mlTemplateRepository = mlTemplateRepository;
-        }
+        private readonly ICategoryRepository _categoryRepository = categoryRepository;
+        private readonly IMLTemplateRepository _mlTemplateRepository = mlTemplateRepository;
 
         // GET: api/<CategoryController>
         [HttpGet]
