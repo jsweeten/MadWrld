@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using MadWrld.Models;
 using MadWrld.Repositories;
+using System.Threading.Tasks;
 
 namespace MadWrld.Tests.Mocks
 {
@@ -24,9 +25,10 @@ namespace MadWrld.Tests.Mocks
             user.Id = lastUser.Id + 1;
             _data.Add(user);
         }
-        public UserProfile GetByFirebaseUserId(string firebaseUserId)
+        public async Task<UserProfile> GetByFirebaseUserIdAsync(string firebaseUserId)
         {
-            return _data.FirstOrDefault(u => u.FirebaseUserId == firebaseUserId);
+            var user = await Task.Run(() => _data.FirstOrDefault(u => u.FirebaseUserId == firebaseUserId));
+            return user;
         }
         public List<UserProfile> GetUsers()
         {

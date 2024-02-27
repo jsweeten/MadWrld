@@ -1,11 +1,11 @@
 ﻿using System;
+using MadWrld.Models;
+using MadWrld.Repositories;
+using System.Security.Claims;
 using Microsoft.Data.SqlClient;
 
 namespace MadWrld.Utils
 {
-    /// <summary>
-    ///  A set of useful function for interacting with ADO.NET
-    /// </summary>
     public static class DbUtils
     {
         /// <summary>

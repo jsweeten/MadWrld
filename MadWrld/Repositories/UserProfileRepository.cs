@@ -3,217 +3,185 @@ using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
 using MadWrld.Models;
 using MadWrld.Utils;
+using System.Threading.Tasks;
 
 namespace MadWrld.Repositories
 {
-    public class UserProfileRepository : BaseRepository, IUserProfileRepository
+    public class UserProfileRepository(IConfiguration configuration) : BaseRepository(configuration), IUserProfileRepository
     {
-        public UserProfileRepository(IConfiguration configuration) : base(configuration) { }
-        public UserProfile GetByFirebaseUserId(string firebaseUserId)
+        public async Task<UserProfile> GetByFirebaseUserIdAsync(string firebaseUserId)
         {
-            using (var conn = Connection)
-            {
-                conn.Open();
-                using (var cmd = conn.CreateCommand())
-                {
-                    cmd.CommandText = @"
+            using var conn = Connection;
+            await conn.OpenAsync();
+            using var cmd = conn.CreateCommand();
+            cmd.CommandText = @"
                         SELECT up.Id, Up.FirebaseUserId, up.FirstName, up.LastName, up.Email, up.UserTypeId, ut.[Id], ut.[Name]
                           FROM UserProfile up
                           LEFT JOIN UserType ut ON up.UserTypeId = ut.[Id]
                          WHERE Up.FirebaseUserId = @FirebaseUserId";
 
-                    DbUtils.AddParameter(cmd, "@FirebaseUserId", firebaseUserId);
+            DbUtils.AddParameter(cmd, "@FirebaseUserId", firebaseUserId);
 
-                    UserProfile userProfile = null;
+            UserProfile userProfile = null;
 
-                    var reader = cmd.ExecuteReader();
-                    if (reader.Read())
+            var reader = await cmd.ExecuteReaderAsync();
+            if (await reader.ReadAsync())
+            {
+                userProfile = new UserProfile()
+                {
+                    Id = DbUtils.GetInt(reader, "Id"),
+                    FirebaseUserId = DbUtils.GetString(reader, "FirebaseUserId"),
+                    FirstName = DbUtils.GetString(reader, "FirstName"),
+                    LastName = DbUtils.GetString(reader, "LastName"),
+                    Email = DbUtils.GetString(reader, "Email"),
+                    UserTypeId = DbUtils.GetInt(reader, "UserTypeId"),
+                    UserType = new UserType()
                     {
-                        userProfile = new UserProfile()
-                        {
-                            Id = DbUtils.GetInt(reader, "Id"),
-                            FirebaseUserId = DbUtils.GetString(reader, "FirebaseUserId"),
-                            FirstName = DbUtils.GetString(reader, "FirstName"),
-                            LastName = DbUtils.GetString(reader, "LastName"),
-                            Email = DbUtils.GetString(reader, "Email"),
-                            UserTypeId = DbUtils.GetInt(reader, "UserTypeId"),
-                            UserType = new UserType()
-                            {
-                                Name = DbUtils.GetString(reader, "Name")
-                            }
-                        };
+                        Name = DbUtils.GetString(reader, "Name")
                     }
-                    reader.Close();
-
-                    return userProfile;
-                }
+                };
             }
+            reader.Close();
+
+            return userProfile;
         }
 
         public UserProfile GetById(int id)
         {
-            using (var conn = Connection)
-            {
-                conn.Open();
-                using (var cmd = conn.CreateCommand())
-                {
-                    cmd.CommandText = @"
+            using var conn = Connection;
+            conn.Open();
+            using var cmd = conn.CreateCommand();
+            cmd.CommandText = @"
                         SELECT up.Id, Up.FirebaseUserId, up.FirstName, up.LastName, up.Email, up.UserTypeId, ut.[Id], ut.[Name]
                         FROM UserProfile up
                         LEFT JOIN UserType ut ON up.UserTypeId = ut.[Id]
                         WHERE up.Id = @id";
 
-                    DbUtils.AddParameter(cmd, "@id", id);
+            DbUtils.AddParameter(cmd, "@id", id);
 
-                    UserProfile userProfile = null;
+            UserProfile userProfile = null;
 
-                    var reader = cmd.ExecuteReader();
-                    if (reader.Read())
+            var reader = cmd.ExecuteReader();
+            if (reader.Read())
+            {
+                userProfile = new UserProfile()
+                {
+                    Id = DbUtils.GetInt(reader, "Id"),
+                    FirebaseUserId = DbUtils.GetString(reader, "FirebaseUserId"),
+                    FirstName = DbUtils.GetString(reader, "FirstName"),
+                    LastName = DbUtils.GetString(reader, "LastName"),
+                    Email = DbUtils.GetString(reader, "Email"),
+                    UserTypeId = DbUtils.GetInt(reader, "UserTypeId"),
+                    UserType = new UserType()
                     {
-                        userProfile = new UserProfile()
-                        {
-                            Id = DbUtils.GetInt(reader, "Id"),
-                            FirebaseUserId = DbUtils.GetString(reader, "FirebaseUserId"),
-                            FirstName = DbUtils.GetString(reader, "FirstName"),
-                            LastName = DbUtils.GetString(reader, "LastName"),
-                            Email = DbUtils.GetString(reader, "Email"),
-                            UserTypeId = DbUtils.GetInt(reader, "UserTypeId"),
-                            UserType = new UserType()
-                            {
-                                Name = DbUtils.GetString(reader, "Name")
-                            }
-                        };
+                        Name = DbUtils.GetString(reader, "Name")
                     }
-                    reader.Close();
-
-                    return userProfile;
-                }
+                };
             }
+            reader.Close();
+
+            return userProfile;
         }
 
         public List<UserProfile> GetUsers()
         {
-            using (SqlConnection conn = Connection)
-            {
-                conn.Open();
-                using (SqlCommand cmd = conn.CreateCommand())
-                {
-                    cmd.CommandText = @"
+            using SqlConnection conn = Connection;
+            conn.Open();
+            using SqlCommand cmd = conn.CreateCommand();
+            cmd.CommandText = @"
                         SELECT up.Id, Up.FirebaseUserId, up.FirstName, up.LastName, up.Email, up.UserTypeId, ut.[Id], ut.[Name]
                         FROM UserProfile up
                         LEFT JOIN UserType ut ON up.UserTypeId = ut.[Id]";
 
-                    using (SqlDataReader reader = cmd.ExecuteReader())
+            using SqlDataReader reader = cmd.ExecuteReader();
+            var users = new List<UserProfile>();
+            while (reader.Read())
+            {
+                users.Add(new UserProfile()
+                {
+                    Id = DbUtils.GetInt(reader, "Id"),
+                    FirebaseUserId = DbUtils.GetString(reader, "FirebaseUserId"),
+                    FirstName = DbUtils.GetString(reader, "FirstName"),
+                    LastName = DbUtils.GetString(reader, "LastName"),
+                    Email = DbUtils.GetString(reader, "Email"),
+                    UserType = new UserType()
                     {
-                        var users = new List<UserProfile>();
-                        while (reader.Read())
-                        {
-                            users.Add(new UserProfile()
-                            {
-                                Id = DbUtils.GetInt(reader, "Id"),
-                                FirebaseUserId = DbUtils.GetString(reader, "FirebaseUserId"),
-                                FirstName = DbUtils.GetString(reader, "FirstName"),
-                                LastName = DbUtils.GetString(reader, "LastName"),
-                                Email = DbUtils.GetString(reader, "Email"),
-                                UserType = new UserType()
-                                {
-                                    Name = DbUtils.GetString(reader, "Name")
-                                }
-                            });
-                        }
-                        return users;
+                        Name = DbUtils.GetString(reader, "Name")
                     }
-                }
+                });
             }
+            return users;
         }
         
         public List<UserType> GetUserTypes()
         {
-            using (SqlConnection conn = Connection)
-            {
-                conn.Open();
-                using (SqlCommand cmd = conn.CreateCommand())
-                {
-                    cmd.CommandText = @"
+            using SqlConnection conn = Connection;
+            conn.Open();
+            using SqlCommand cmd = conn.CreateCommand();
+            cmd.CommandText = @"
                         SELECT Id, Name
                         FROM UserType";
 
-                    using (SqlDataReader reader = cmd.ExecuteReader())
-                    {
-                        var ut = new List<UserType>();
-                        while (reader.Read())
-                        {
-                            ut.Add(new UserType()
-                            {
-                                Id = DbUtils.GetInt(reader, "Id"),
-                                Name = DbUtils.GetString(reader, "Name")
-                            });
-                        }
-                        return ut;
-                    }
-                }
+            using SqlDataReader reader = cmd.ExecuteReader();
+            var ut = new List<UserType>();
+            while (reader.Read())
+            {
+                ut.Add(new UserType()
+                {
+                    Id = DbUtils.GetInt(reader, "Id"),
+                    Name = DbUtils.GetString(reader, "Name")
+                });
             }
+            return ut;
         }
 
         public void Add(UserProfile userProfile)
         {
-            using (var conn = Connection)
-            {
-                conn.Open();
-                using (var cmd = conn.CreateCommand())
-                {
-                    cmd.CommandText = @"INSERT INTO UserProfile (FirebaseUserId, FirstName, LastName, Email, UserTypeId)
+            using var conn = Connection;
+            conn.Open();
+            using var cmd = conn.CreateCommand();
+            cmd.CommandText = @"INSERT INTO UserProfile (FirebaseUserId, FirstName, LastName, Email, UserTypeId)
                                         OUTPUT INSERTED.ID
                                         VALUES (@FirebaseUserId, @FirstName, @LastName, @Email, @UserTypeId)";
-                    DbUtils.AddParameter(cmd, "@FirebaseUserId", userProfile.FirebaseUserId);
-                    DbUtils.AddParameter(cmd, "@FirstName", userProfile.FirstName);
-                    DbUtils.AddParameter(cmd, "@LastName", userProfile.LastName);
-                    DbUtils.AddParameter(cmd, "@Email", userProfile.Email);
-                    DbUtils.AddParameter(cmd, "@UserTypeId", userProfile.UserTypeId);
+            DbUtils.AddParameter(cmd, "@FirebaseUserId", userProfile.FirebaseUserId);
+            DbUtils.AddParameter(cmd, "@FirstName", userProfile.FirstName);
+            DbUtils.AddParameter(cmd, "@LastName", userProfile.LastName);
+            DbUtils.AddParameter(cmd, "@Email", userProfile.Email);
+            DbUtils.AddParameter(cmd, "@UserTypeId", userProfile.UserTypeId);
 
-                    userProfile.Id = (int)cmd.ExecuteScalar();
-                }
-            }
+            userProfile.Id = (int)cmd.ExecuteScalar();
         }
 
         public void Update(UserProfile userProfile)
         {
-            using (var conn = Connection)
-            {
-                conn.Open();
-                using (var cmd = conn.CreateCommand())
-                {
-                    cmd.CommandText = @"UPDATE UserProfile
+            using var conn = Connection;
+            conn.Open();
+            using var cmd = conn.CreateCommand();
+            cmd.CommandText = @"UPDATE UserProfile
                                         SET FirstName = @firstName,
                                         LastName = @lastName,
                                         Email = @email,
                                         UserTypeId = @userTypeId
                                         WHERE Id = @id";
-                    DbUtils.AddParameter(cmd, "@firstName", userProfile.FirstName);
-                    DbUtils.AddParameter(cmd, "@lastName", userProfile.LastName);
-                    DbUtils.AddParameter(cmd, "@email", userProfile.Email);
-                    DbUtils.AddParameter(cmd, "@id", userProfile.Id);
-                    DbUtils.AddParameter(cmd, "@userTypeId", userProfile.UserTypeId);
+            DbUtils.AddParameter(cmd, "@firstName", userProfile.FirstName);
+            DbUtils.AddParameter(cmd, "@lastName", userProfile.LastName);
+            DbUtils.AddParameter(cmd, "@email", userProfile.Email);
+            DbUtils.AddParameter(cmd, "@id", userProfile.Id);
+            DbUtils.AddParameter(cmd, "@userTypeId", userProfile.UserTypeId);
 
-                    cmd.ExecuteNonQuery();
-                }
-            }
+            cmd.ExecuteNonQuery();
         }
 
         public void Remove(int id)
         {
-            using (var conn = Connection)
-            {
-                conn.Open();
-                using (var cmd = conn.CreateCommand())
-                {
-                    cmd.CommandText = @"DELETE FROM UserProfile
+            using var conn = Connection;
+            conn.Open();
+            using var cmd = conn.CreateCommand();
+            cmd.CommandText = @"DELETE FROM UserProfile
                                         WHERE Id = @id";
-                    DbUtils.AddParameter(cmd, "@id", id);
+            DbUtils.AddParameter(cmd, "@id", id);
 
-                    cmd.ExecuteNonQuery();
-                }
-            }
+            cmd.ExecuteNonQuery();
         }
     }
 }

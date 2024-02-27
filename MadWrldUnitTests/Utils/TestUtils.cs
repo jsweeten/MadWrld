@@ -78,6 +78,23 @@ namespace MadWrld.Tests.Utils
             }
             return madlibs;
         }
+
+        internal static List<MLTemplate> CreateTestTemplates(int count)
+        {
+            var templates = new List<MLTemplate>();
+            for (var i = 1; i <= count; i++)
+            {
+                templates.Add(new MLTemplate()
+                {
+                    Id = i,
+                    Title = $"Title {i}",
+                    UserId = i,
+                    AnswerTemplates = TestUtils.CreateTestAnswerTemplates(i)
+                });
+            }
+            return templates;
+        }
+
         internal static UserProfile CreateCurrentUser()
         {
             var user = new UserProfile()
